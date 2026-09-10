@@ -90,17 +90,21 @@ label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
 
 .decide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
 @media (max-width:700px){.decide{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.dbtn{display:flex;flex-direction:column;align-items:flex-start;gap:3px;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;cursor:pointer;text-align:left;min-height:64px}
-.dbtn .key{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);border:1px solid var(--line-strong);border-radius:4px;padding:0 5px;line-height:16px}
-.dbtn .t{font-weight:600;font-size:14px}
-.dbtn .s{font-size:12px;color:var(--muted);line-height:1.3}
-.dbtn:hover{border-color:var(--line-strong);background:var(--ground)}
-.dbtn[data-s="approved"].on{border-color:var(--ok);background:var(--ok-soft)}
-.dbtn[data-s="metadata"].on{border-color:var(--accent);background:var(--accent-soft)}
-.dbtn[data-s="rejected"].on{border-color:var(--bad);background:var(--bad-soft)}
-.dbtn[data-s="experimental"].on{border-color:var(--exp);background:var(--exp-soft)}
-.dbtn[data-s="linguist"].on{border-color:var(--lin);background:var(--lin-soft)}
-.dbtn[data-s="source"].on{border-color:var(--src);background:var(--src-soft)}
+.dbtn{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:12px 12px 12px 18px;cursor:pointer;text-align:left;min-height:88px;--c:var(--muted);--csoft:var(--ground)}
+.dbtn::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;border-radius:9px 0 0 9px;background:var(--c)}
+.dbtn .head{display:flex;align-items:center;gap:8px;width:100%}
+.dbtn .key{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);border:1px solid var(--line-strong);border-radius:4px;padding:0 5px;line-height:16px;margin-left:auto}
+.dbtn .t{font-weight:600;font-size:15px;color:var(--c)}
+.dbtn .code{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);letter-spacing:.01em}
+.dbtn .s{font-size:12.5px;color:var(--muted);line-height:1.35;margin-top:3px}
+.dbtn:hover{border-color:var(--c);background:var(--csoft)}
+.dbtn.on{border-color:var(--c);background:var(--csoft);box-shadow:0 0 0 2px var(--csoft)}
+.dbtn[data-s="approved"]{--c:var(--ok);--csoft:var(--ok-soft)}
+.dbtn[data-s="metadata"]{--c:var(--accent);--csoft:var(--accent-soft)}
+.dbtn[data-s="rejected"]{--c:var(--bad);--csoft:var(--bad-soft)}
+.dbtn[data-s="experimental"]{--c:var(--exp);--csoft:var(--exp-soft)}
+.dbtn[data-s="linguist"]{--c:var(--lin);--csoft:var(--lin-soft)}
+.dbtn[data-s="source"]{--c:var(--src);--csoft:var(--src-soft)}
 .noterow{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
 .noterow input{flex:1 1 260px;min-width:0;width:auto}
 .reasons{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
@@ -144,12 +148,9 @@ dialog p{margin:6px 0;color:var(--muted);font-size:14px}
 dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 @media (prefers-reduced-motion:no-preference){.dbtn,.blk,.btn{transition:background .12s,border-color .12s}}
 /* simple mode: one word, three choices */
-body.simple .wrap{grid-template-columns:1fr;max-width:980px;margin-inline:auto}
-body.simple .rail,body.simple .noterow,body.simple #claimBtn,body.simple details.guide{display:none}
+body.simple .noterow,body.simple #claimBtn,body.simple details.guide{display:none}
 body.simple .tbl .hd{font-size:13px}
-body.simple .dbtn{min-height:84px;padding:14px}
-body.simple .dbtn .t{font-size:16px}
-body.simple .word{font-size:48px}
+
 .ask{margin-top:12px;font-size:14px;font-weight:500}
 .metaform{margin-top:12px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;align-items:end}
 .metaform label{margin:0 0 4px}
@@ -226,19 +227,19 @@ body.simple .word{font-size:48px}
       <div class="meta"><span class="rank">rank <b id="rank">—</b> of <span id="total">—</span></span><span id="decidedBy"></span></div>
       <div class="word" id="word">—</div>
       <div class="facts" id="facts"></div>
-      <div class="note-hint"><b>approved</b> means the word <em>and</em> the imported part of speech shown above are both right. If the word is right but the spelling or part of speech is wrong and you know the correct one, use <b>approved_with_metadata_change</b>. If you are not certain, use <b>needs_linguist</b>.</div>
+      <div class="note-hint"><b>Approved</b> means the word <em>and</em> the imported part of speech shown above are both right. If the word is right but the spelling or part of speech is wrong and you know the correct one, use <b>Approved, metadata corrected</b>. If you are not certain, use <b>Needs linguist</b>.</div>
       <div class="decide" id="decide">
-        <button class="dbtn" data-s="approved"><span class="key">1</span><span class="t">approved</span><span class="s">Valid Kurmancî word; the imported spelling and part of speech are right</span></button>
-        <button class="dbtn" data-s="metadata"><span class="key">2</span><span class="t">approved_with_metadata_change</span><span class="s">Valid word, but the spelling or part of speech shown must be corrected</span></button>
-        <button class="dbtn" data-s="rejected"><span class="key">3</span><span class="t">rejected_from_default_pack</span><span class="s">Keep out of the default pack; reason required</span></button>
-        <button class="dbtn" data-s="experimental"><span class="key">4</span><span class="t">experimental_only</span><span class="s">Keep in experimental data only, not the reviewed pack</span></button>
-        <button class="dbtn" data-s="linguist"><span class="key">5</span><span class="t">needs_linguist</span><span class="s">Unresolved linguistic uncertainty; specialist review needed</span></button>
-        <button class="dbtn" data-s="source"><span class="key">6</span><span class="t">needs_source_investigation</span><span class="s">Provenance or attestation must be investigated first</span></button>
+        <button class="dbtn" data-s="approved"><span class="head"><span class="t">Approved</span><span class="key">1</span></span><span class="code">approved</span><span class="s">Valid Kurmancî word; spelling and part of speech are right</span></button>
+        <button class="dbtn" data-s="metadata"><span class="head"><span class="t">Approved, metadata corrected</span><span class="key">2</span></span><span class="code">approved_with_metadata_change</span><span class="s">Valid word, but the spelling or part of speech must be corrected</span></button>
+        <button class="dbtn" data-s="rejected"><span class="head"><span class="t">Rejected</span><span class="key">3</span></span><span class="code">rejected_from_default_pack</span><span class="s">Keep out of the default pack; reason required</span></button>
+        <button class="dbtn" data-s="experimental"><span class="head"><span class="t">Experimental only</span><span class="key">4</span></span><span class="code">experimental_only</span><span class="s">Keep in experimental data, not in the reviewed pack</span></button>
+        <button class="dbtn" data-s="linguist"><span class="head"><span class="t">Needs linguist</span><span class="key">5</span></span><span class="code">needs_linguist</span><span class="s">Unresolved linguistic uncertainty; a specialist must decide</span></button>
+        <button class="dbtn" data-s="source"><span class="head"><span class="t">Needs source investigation</span><span class="key">6</span></span><span class="code">needs_source_investigation</span><span class="s">Provenance or attestation must be checked first</span></button>
       </div>
       <form class="metaform" id="metaForm" hidden>
         <div><label for="metaDisplay">Corrected spelling</label><input type="text" id="metaDisplay" autocomplete="off" spellcheck="false"></div>
         <div><label for="metaPos">Corrected part of speech</label><select id="metaPos"></select></div>
-        <div class="full"><button class="btn primary" type="submit">Save approved_with_metadata_change</button><button class="btn quiet" type="button" id="metaCancel">Cancel</button><span class="err" id="metaErr"></span></div>
+        <div class="full"><button class="btn primary" type="submit">Save corrected metadata</button><button class="btn quiet" type="button" id="metaCancel">Cancel</button><span class="err" id="metaErr"></span></div>
       </form>
       <div class="noterow">
         <input type="text" id="note" placeholder="Note (required for Reject; optional otherwise). Press N to focus." autocomplete="off">
@@ -305,12 +306,12 @@ body.simple .word{font-size:48px}
   const N = C.length, NB = Math.ceil(N / BLOCK);
   const byTid = new Map(C.map((c,i)=>[c.tid,i]));
   const STATUS = {
-    approved:     {label:'approved',                      repo:'approved',                      cls:'approved',     defaultNote:'Human-approved lexical entry; imported Hunspell metadata accepted as-is.'},
-    metadata:     {label:'approved_with_metadata_change', repo:'approved_with_metadata_change', cls:'metadata',     defaultNote:'Human-approved lexical entry with corrected metadata.'},
-    rejected:     {label:'rejected_from_default_pack',    repo:'rejected_from_default_pack',    cls:'rejected',     defaultNote:''},
-    experimental: {label:'experimental_only',             repo:'experimental_only',             cls:'experimental', defaultNote:'Human review: retain only in experimental vocabulary.'},
-    linguist:     {label:'needs_linguist',                repo:'needs_linguist',                cls:'linguist',     defaultNote:'Needs linguist'},
-    source:       {label:'needs_source_investigation',    repo:'needs_source_investigation',    cls:'source',       defaultNote:'Needs source investigation'},
+    approved:     {label:'Approved',                     repo:'approved',                      cls:'approved',     defaultNote:'Human-approved lexical entry; imported Hunspell metadata accepted as-is.'},
+    metadata:     {label:'Approved, metadata corrected', repo:'approved_with_metadata_change', cls:'metadata',     defaultNote:'Human-approved lexical entry with corrected metadata.'},
+    rejected:     {label:'Rejected',                     repo:'rejected_from_default_pack',    cls:'rejected',     defaultNote:''},
+    experimental: {label:'Experimental only',            repo:'experimental_only',             cls:'experimental', defaultNote:'Human review: retain only in experimental vocabulary.'},
+    linguist:     {label:'Needs linguist',               repo:'needs_linguist',                cls:'linguist',     defaultNote:'Needs linguist'},
+    source:       {label:'Needs source investigation',   repo:'needs_source_investigation',    cls:'source',       defaultNote:'Needs source investigation'},
   };
   const ORDER = ['approved','metadata','rejected','experimental','linguist','source'];
   const POS_VALUES = ['noun_fem','noun_masc','noun_fem_masc','noun','adjective','adverb','verb','propn','num','sconj','adp','pronoun','intj','adj_adv'];
