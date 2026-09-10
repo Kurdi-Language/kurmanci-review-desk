@@ -76,6 +76,8 @@ label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
 .blk .mini span{display:block;height:100%;background:var(--ok)}
 .blk .who{font-size:11.5px;color:var(--muted);white-space:nowrap}
 .blk .who.me{color:var(--sun)}
+.blk .who:first-letter{}
+.blk .who.done{color:var(--ok)}
 
 .focus{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:18px 22px 20px}
 .focus .meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px}
@@ -363,7 +365,7 @@ body.simple .tbl .hd{font-size:13px}
     const b0 = blockOf(cur); let html='';
     for (let b=0;b<NB;b++){
       const range=C.slice(b*BLOCK,(b+1)*BLOCK); const k=counts(range); const done=range.length-k.pending; const cl=claims.get(b);
-      html += `<button class="blk${b===b0?' active':''}" data-b="${b}"><span class="n num">${String(b+1).padStart(3,'0')}</span><span><span class="range num">${fmt(range[0].rank)}–${fmt(range[range.length-1].rank)}</span><span class="mini"><span style="width:${(done/range.length*100).toFixed(0)}%"></span></span></span><span class="who${cl&&me&&cl.handle===me.handle?' me':''}">${cl?esc(cl.handle):(done===range.length?t('done'):t('open'))}</span></button>`;
+      html += `<button class="blk${b===b0?' active':''}" data-b="${b}"><span class="n num">${String(b+1).padStart(3,'0')}</span><span><span class="range num">${fmt(range[0].rank)}–${fmt(range[range.length-1].rank)}</span><span class="mini"><span style="width:${(done/range.length*100).toFixed(0)}%"></span></span></span><span class="who${done===range.length?' done':(cl&&me&&cl.handle===me.handle?' me':'')}">${done===range.length?'✓ '+esc(t('done')):(cl?esc(cl.handle)+' · '+done+'/'+range.length:t('open'))}</span></button>`;
     }
     $('blocks').innerHTML = html;
   }
