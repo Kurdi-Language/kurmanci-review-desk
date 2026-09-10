@@ -62,7 +62,7 @@ label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
 .legend{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:13px}
 .legend .k{display:flex;align-items:center;gap:8px;color:var(--muted)}
 .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
-.d-approved{background:var(--ok)}.d-rejected{background:var(--bad)}.d-experimental{background:var(--exp)}.d-linguist{background:var(--lin)}.d-source{background:var(--src)}.d-pending{background:var(--line-strong)}
+.d-approved{background:var(--ok)}.d-metadata{background:var(--accent)}.d-rejected{background:var(--bad)}.d-experimental{background:var(--exp)}.d-linguist{background:var(--lin)}.d-source{background:var(--src)}.d-pending{background:var(--line-strong)}
 
 .blocks{display:flex;flex-direction:column;max-height:46vh;overflow:auto}
 @media (max-width:860px){.blocks{max-height:32vh}}
@@ -88,7 +88,7 @@ label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
 .flag{display:inline-block;border-radius:6px;padding:1px 7px;font-size:12px;background:var(--sun-soft);color:var(--ink);border:1px solid var(--sun);margin-right:4px}
 .note-hint{font-size:13px;color:var(--muted);margin-top:10px}
 
-.decide{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:16px}
+.decide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
 @media (max-width:700px){.decide{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .dbtn{display:flex;flex-direction:column;align-items:flex-start;gap:3px;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;cursor:pointer;text-align:left;min-height:64px}
 .dbtn .key{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);border:1px solid var(--line-strong);border-radius:4px;padding:0 5px;line-height:16px}
@@ -96,6 +96,7 @@ label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
 .dbtn .s{font-size:12px;color:var(--muted);line-height:1.3}
 .dbtn:hover{border-color:var(--line-strong);background:var(--ground)}
 .dbtn[data-s="approved"].on{border-color:var(--ok);background:var(--ok-soft)}
+.dbtn[data-s="metadata"].on{border-color:var(--accent);background:var(--accent-soft)}
 .dbtn[data-s="rejected"].on{border-color:var(--bad);background:var(--bad-soft)}
 .dbtn[data-s="experimental"].on{border-color:var(--exp);background:var(--exp-soft)}
 .dbtn[data-s="linguist"].on{border-color:var(--lin);background:var(--lin-soft)}
@@ -119,7 +120,7 @@ tr.row:hover td{background:var(--ground)}
 tr.row.cur td{background:var(--accent-soft)}
 td.w{font-family:"IBM Plex Serif",Georgia,serif;font-size:16px}
 .pill{display:inline-block;border-radius:999px;padding:1px 8px;font-size:12px;font-weight:500;white-space:nowrap}
-.p-approved{background:var(--ok-soft);color:var(--ok)}.p-rejected{background:var(--bad-soft);color:var(--bad)}.p-experimental{background:var(--exp-soft);color:var(--exp)}.p-linguist{background:var(--lin-soft);color:var(--lin)}.p-source{background:var(--src-soft);color:var(--src)}.p-pending{background:var(--ground);color:var(--muted);border:1px solid var(--line)}
+.p-approved{background:var(--ok-soft);color:var(--ok)}.p-metadata{background:var(--accent-soft);color:var(--accent)}.p-rejected{background:var(--bad-soft);color:var(--bad)}.p-experimental{background:var(--exp-soft);color:var(--exp)}.p-linguist{background:var(--lin-soft);color:var(--lin)}.p-source{background:var(--src-soft);color:var(--src)}.p-pending{background:var(--ground);color:var(--muted);border:1px solid var(--line)}
 td.by{color:var(--muted);font-size:12.5px;white-space:nowrap}
 .tblwrap{overflow-x:auto}
 
@@ -145,18 +146,16 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 /* simple mode: one word, three choices */
 body.simple .wrap{grid-template-columns:1fr;max-width:760px;margin-inline:auto}
 body.simple .rail,body.simple .tbl,body.simple .noterow,body.simple #claimBtn,body.simple details.guide,body.simple #prev,body.simple #next{display:none}
-body.simple .decide{grid-template-columns:repeat(3,minmax(0,1fr))}
-body.simple .dbtn[data-s="experimental"],body.simple .dbtn[data-s="source"]{display:none}
-body.simple.more .dbtn[data-s="experimental"],body.simple.more .dbtn[data-s="source"]{display:flex}
-body.simple.more .decide{grid-template-columns:repeat(5,minmax(0,1fr))}
 body.simple .dbtn{min-height:84px;padding:14px}
 body.simple .dbtn .t{font-size:16px}
 body.simple .word{font-size:52px}
-#moreBtn{display:none}
-body.simple #moreBtn{display:inline-block}
-.mywords{font-size:13px;color:var(--muted)}
 .ask{margin-top:12px;font-size:14px;font-weight:500}
-@media (max-width:700px){body.simple .decide,body.simple.more .decide{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.metaform{margin-top:12px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;align-items:end}
+.metaform label{margin:0 0 4px}
+.metaform select{width:100%;border:1px solid var(--line-strong);border-radius:8px;padding:9px 10px;font:inherit;background:var(--surface);color:var(--ink)}
+.metaform .full{grid-column:1 / -1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.metaform .err{color:var(--bad);font-size:13px}
+@media (max-width:700px){.decide{grid-template-columns:repeat(2,minmax(0,1fr))}.metaform{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -226,14 +225,20 @@ body.simple #moreBtn{display:inline-block}
       <div class="meta"><span class="rank">rank <b id="rank">—</b> of <span id="total">—</span></span><span id="decidedBy"></span></div>
       <div class="word" id="word">—</div>
       <div class="facts" id="facts"></div>
-      <div class="note-hint">Approve means the word <em>and</em> the imported part of speech shown above are both right. If the word is fine but the metadata is wrong, choose Needs linguist and say what is wrong.</div>
+      <div class="note-hint"><b>approved</b> means the word <em>and</em> the imported part of speech shown above are both right. If the word is right but the spelling or part of speech is wrong and you know the correct one, use <b>approved_with_metadata_change</b>. If you are not certain, use <b>needs_linguist</b>.</div>
       <div class="decide" id="decide">
-        <button class="dbtn" data-s="approved"><span class="key">1</span><span class="t">Approve</span><span class="s">Valid Kurmancî word, metadata correct</span></button>
-        <button class="dbtn" data-s="rejected"><span class="key">2</span><span class="t">Reject</span><span class="s">Keep out of the default pack (reason required)</span></button>
-        <button class="dbtn" data-s="experimental"><span class="key">3</span><span class="t">Experimental</span><span class="s">Usable, but not for the default pack</span></button>
-        <button class="dbtn" data-s="linguist"><span class="key">4</span><span class="t">Not sure</span><span class="s">Maybe valid, but spelling, standard form, or part of speech is uncertain</span></button>
-        <button class="dbtn" data-s="source"><span class="key">5</span><span class="t">Needs source</span><span class="s">Provenance or attestation unclear</span></button>
+        <button class="dbtn" data-s="approved"><span class="key">1</span><span class="t">approved</span><span class="s">Valid Kurmancî word; the imported spelling and part of speech are right</span></button>
+        <button class="dbtn" data-s="metadata"><span class="key">2</span><span class="t">approved_with_metadata_change</span><span class="s">Valid word, but the spelling or part of speech shown must be corrected</span></button>
+        <button class="dbtn" data-s="rejected"><span class="key">3</span><span class="t">rejected_from_default_pack</span><span class="s">Keep out of the default pack; reason required</span></button>
+        <button class="dbtn" data-s="experimental"><span class="key">4</span><span class="t">experimental_only</span><span class="s">Keep in experimental data only, not the reviewed pack</span></button>
+        <button class="dbtn" data-s="linguist"><span class="key">5</span><span class="t">needs_linguist</span><span class="s">Unresolved linguistic uncertainty; specialist review needed</span></button>
+        <button class="dbtn" data-s="source"><span class="key">6</span><span class="t">needs_source_investigation</span><span class="s">Provenance or attestation must be investigated first</span></button>
       </div>
+      <form class="metaform" id="metaForm" hidden>
+        <div><label for="metaDisplay">Corrected spelling</label><input type="text" id="metaDisplay" autocomplete="off" spellcheck="false"></div>
+        <div><label for="metaPos">Corrected part of speech</label><select id="metaPos"></select></div>
+        <div class="full"><button class="btn primary" type="submit">Save approved_with_metadata_change</button><button class="btn quiet" type="button" id="metaCancel">Cancel</button><span class="err" id="metaErr"></span></div>
+      </form>
       <div class="noterow">
         <input type="text" id="note" placeholder="Note (required for Reject; optional otherwise). Press N to focus." autocomplete="off">
         <button class="btn" id="saveNote">Save note</button>
@@ -241,7 +246,6 @@ body.simple #moreBtn{display:inline-block}
       </div>
       <div class="ask" id="ask" hidden></div>
       <div class="reasons" id="reasons"></div>
-      <button class="btn quiet" id="moreBtn" type="button" style="margin-top:10px">More choices (Experimental, Needs source)</button>
       <div class="status-line" id="statusLine"></div>
       <div class="navrow">
         <button class="btn" id="prev">← Prev</button>
@@ -255,13 +259,14 @@ body.simple #moreBtn{display:inline-block}
         <div class="bd">
           <p>You are the trust boundary. Nothing here is approved by software; every status you pick becomes a human decision recorded under your reviewer handle. Counts show how many Kurmancî Wikipedia articles contain the word. They tell you what to look at first, not whether the word is correct.</p>
           <dl>
-            <dt>Approve</dt><dd>The spelling is standard Kurmancî and the imported part of speech is right. The word enters the reviewed pack used for spell check and suggestions.</dd>
-            <dt>Reject</dt><dd>Foreign word, foreign proper name, misspelling, fragment, or otherwise not default-keyboard vocabulary. Write why.</dd>
-            <dt>Experimental</dt><dd>Real usage but not something the default keyboard should suggest or accept silently.</dd>
-            <dt>Needs linguist</dt><dd>You believe the word may be valid but cannot vouch for the spelling, the standard form, or the part of speech.</dd>
-            <dt>Needs source</dt><dd>You cannot tell where this form comes from or whether it is attested outside this source.</dd>
+            <dt>approved</dt><dd>The imported entry and its metadata are accepted as-is for the reviewed pack.</dd>
+            <dt>approved_with_metadata_change</dt><dd>The word is valid but the spelling or part of speech must be replaced. Use it only when you know the correct replacement.</dd>
+            <dt>rejected_from_default_pack</dt><dd>Must not enter the default pack. Foreign word, foreign proper name, misspelling, fragment. A reason is required.</dd>
+            <dt>experimental_only</dt><dd>May stay in experimental data but not in the reviewed pack.</dd>
+            <dt>needs_linguist</dt><dd>Unresolved linguistic uncertainty; a specialist must decide.</dd>
+            <dt>needs_source_investigation</dt><dd>The candidate needs stronger attestation or provenance before a decision.</dd>
           </dl>
-          <p>Keys: <b>1–5</b> decide, <b>Backspace</b> clear, <b>←/→</b> move, <b>Enter</b> next undecided, <b>N</b> note. In the simple view the site reserves a range of 50 words for you and moves to the next range when you finish; in the detailed view you claim blocks yourself.</p>
+          <p>Keys: <b>1–6</b> decide, <b>Backspace</b> clear, <b>←/→</b> move, <b>Enter</b> next undecided, <b>N</b> note. In the simple view the site reserves a range of 50 words for you and moves to the next range when you finish; in the detailed view you claim blocks yourself.</p>
         </div>
       </details>
     </section>
@@ -298,18 +303,22 @@ body.simple #moreBtn{display:inline-block}
   const N = C.length, NB = Math.ceil(N / BLOCK);
   const byTid = new Map(C.map((c,i)=>[c.tid,i]));
   const STATUS = {
-    approved:     {label:'Approved',       repo:'approved',                   cls:'approved',     defaultNote:'Human-approved lexical entry; imported Hunspell metadata accepted as-is.'},
-    rejected:     {label:'Rejected',       repo:'rejected_from_default_pack', cls:'rejected',     defaultNote:''},
-    experimental: {label:'Experimental',   repo:'experimental_only',          cls:'experimental', defaultNote:'Human review: retain only in experimental vocabulary.'},
-    linguist:     {label:'Needs linguist', repo:'needs_linguist',             cls:'linguist',     defaultNote:'Needs linguist'},
-    source:       {label:'Needs source',   repo:'needs_source_investigation', cls:'source',       defaultNote:'Needs source investigation'},
+    approved:     {label:'approved',                      repo:'approved',                      cls:'approved',     defaultNote:'Human-approved lexical entry; imported Hunspell metadata accepted as-is.'},
+    metadata:     {label:'approved_with_metadata_change', repo:'approved_with_metadata_change', cls:'metadata',     defaultNote:'Human-approved lexical entry with corrected metadata.'},
+    rejected:     {label:'rejected_from_default_pack',    repo:'rejected_from_default_pack',    cls:'rejected',     defaultNote:''},
+    experimental: {label:'experimental_only',             repo:'experimental_only',             cls:'experimental', defaultNote:'Human review: retain only in experimental vocabulary.'},
+    linguist:     {label:'needs_linguist',                repo:'needs_linguist',                cls:'linguist',     defaultNote:'Needs linguist'},
+    source:       {label:'needs_source_investigation',    repo:'needs_source_investigation',    cls:'source',       defaultNote:'Needs source investigation'},
   };
+  const ORDER = ['approved','metadata','rejected','experimental','linguist','source'];
+  const POS_VALUES = ['noun_fem','noun_masc','noun_fem_masc','noun','adjective','adverb','verb','propn','num','sconj','adp','pronoun','intj','adj_adv'];
+  const normalizeText = t => Array.from(t).filter(ch => !/[\p{C}]/u.test(ch) && ch!=='\u200B' && ch!=='\uFEFF').join('').normalize('NFC').toLowerCase();
   const REASONS = {
     rejected:['Foreign word','Foreign proper name','Foreign place name','Misspelling / non-standard form','Fragment, affix, or clitic only','Abbreviation or code','Inflected form, not a lemma'],
     linguist:['Word valid, part of speech wrong','Dialectal; standard form unclear','Spelling uncertain','Unsure if it is a word'],
     experimental:['Slang or colloquial','Rare or technical'],
     source:['Cannot find outside this source','Looks like an import artifact'],
-    approved:[]
+    approved:[], metadata:[]
   };
   const POS = {noun_fem:'noun, feminine',noun_masc:'noun, masculine',noun_fem_masc:'noun, fem./masc.',noun:'noun',adjective:'adjective',adverb:'adverb',verb:'verb',propn:'proper noun',num:'numeral',numeral:'numeral',sconj:'conjunction',adp:'preposition / adposition',pronoun:'pronoun',intj:'interjection',adj_adv:'adjective / adverb',punctuation:'punctuation',unknown:'unknown'};
   const fmt = n => Number(n).toLocaleString('en-US');
@@ -340,7 +349,7 @@ body.simple #moreBtn{display:inline-block}
     $('mineText').textContent = `${fmt(range[0].rank)}–${fmt(range[range.length-1].rank)} · ${range.length-pendingIn(shown)} of ${range.length} done`;
   }
   const decisionOf = c => decisions.get(c.tid) || null;
-  function counts(range){ const k={approved:0,rejected:0,experimental:0,linguist:0,source:0,pending:0}; for(const c of range){const d=decisionOf(c); k[d?d.status:'pending']++;} return k; }
+  function counts(range){ const k={approved:0,metadata:0,rejected:0,experimental:0,linguist:0,source:0,pending:0}; for(const c of range){const d=decisionOf(c); k[d?d.status:'pending']++;} return k; }
   function show(id){ for (const s of ['loginCard','onboardCard','resetCard','app']) $(s).hidden = (s !== id); }
   function setStatus(msg, warn){ const el=$('statusLine'); el.textContent=msg||''; el.classList.toggle('warn',!!warn); }
 
@@ -348,8 +357,8 @@ body.simple #moreBtn{display:inline-block}
   function renderProgress(){
     const k = counts(C); const done = N - k.pending;
     $('progressText').textContent = fmt(done)+' / '+fmt(N);
-    $('progressBar').innerHTML = ['approved','rejected','experimental','linguist','source','pending'].map(s=>`<span class="d-${s}" style="width:${(k[s]/N*100).toFixed(2)}%"></span>`).join('');
-    $('legend').innerHTML = ['approved','rejected','experimental','linguist','source','pending'].map(s=>`<span class="k"><i class="dot d-${s}"></i>${s==='pending'?'Undecided':STATUS[s].label}</span><span class="num">${fmt(k[s])}</span>`).join('');
+    $('progressBar').innerHTML = ORDER.concat('pending').map(s=>`<span class="d-${s}" style="width:${(k[s]/N*100).toFixed(2)}%"></span>`).join('');
+    $('legend').innerHTML = ORDER.concat('pending').map(s=>`<span class="k"><i class="dot d-${s}"></i>${s==='pending'?'Undecided':STATUS[s].label}</span><span class="num">${fmt(k[s])}</span>`).join('');
   }
   function renderBlocks(){
     const b0 = blockOf(cur); let html='';
@@ -363,7 +372,8 @@ body.simple #moreBtn{display:inline-block}
     const c=C[cur]; const d=decisionOf(c);
     $('rank').textContent=fmt(c.rank); $('total').textContent=fmt(N);
     $('word').innerHTML = esc(c.display) + (c.normalized!==c.display?`<small>${esc(c.normalized)}</small>`:'');
-    $('decidedBy').innerHTML = d ? `<span class="pill p-${STATUS[d.status].cls}">${STATUS[d.status].label}</span> by <b>${esc(d.handle)}</b> · ${String(d.decided_at).slice(0,10)}` : '<span class="pill p-pending">Undecided</span>';
+    $('decidedBy').innerHTML = d ? `<span class="pill p-${STATUS[d.status].cls}">${STATUS[d.status].label}</span> by <b>${esc(d.handle)}</b> · ${String(d.decided_at).slice(0,10)}${d.status==='metadata'&&d.meta?` · corrected to <b>${esc(d.meta.display)}</b> (${esc(POS[d.meta.part_of_speech]||d.meta.part_of_speech)})`:''}` : '<span class="pill p-pending">Undecided</span>';
+    $('metaForm').hidden = true; $('metaErr').textContent='';
     const facts=[
       ['Part of speech (imported, unverified)', esc(POS[c.pos]||c.pos)],
       ['Hunspell morphology', `<span class="mono">${esc(c.morph||'—')}</span>`],
@@ -430,25 +440,34 @@ body.simple #moreBtn{display:inline-block}
   }
   function errMsg(e){ return (e && (e.message || e.error_description || e.code)) || String(e); }
 
-  async function writeDecision(c, status, note){
-    const {error} = await sb.from('decisions').upsert({queue_id:QID, target_id:c.tid, rank:c.rank, display:c.display, status, note}, {onConflict:'queue_id,target_id'});
+  async function writeDecision(c, status, note, meta){
+    const {error} = await sb.from('decisions').upsert({queue_id:QID, target_id:c.tid, rank:c.rank, display:c.display, status, note, meta: meta||null}, {onConflict:'queue_id,target_id'});
     if (error) { setStatus('Could not save: '+errMsg(error), true); return false; }
     const b = blockOf(byTid.get(c.tid));
     if (!claims.get(b)) await sb.from('block_claims').upsert({queue_id:QID, block_no:b}, {onConflict:'queue_id,block_no'});
     return true;
   }
-  async function decide(s){
+  function openMetaForm(){
+    const c=C[cur]; const d=decisionOf(c);
+    $('metaDisplay').value = d&&d.meta ? d.meta.display : c.display;
+    $('metaPos').innerHTML = POS_VALUES.map(v=>`<option value="${v}">${esc(POS[v]||v)} (${v})</option>`).join('');
+    $('metaPos').value = (d&&d.meta ? d.meta.part_of_speech : (POS_VALUES.includes(c.pos)?c.pos:'noun'));
+    document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', b.dataset.s==='metadata'));
+    $('metaErr').textContent=''; $('metaForm').hidden=false; $('metaDisplay').focus();
+  }
+  async function decide(s, meta){
     const c=C[cur]; const prev=decisionOf(c);
+    if (s==='metadata' && !meta) { openMetaForm(); return; }
     const note = $('note').value.trim() || STATUS[s].defaultNote;
     if (s==='rejected' && !note){ pendingReject = true; $('ask').hidden=false; $('ask').textContent='Why reject "'+c.display+'"? Pick one:'; renderReasons('rejected'); document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', b.dataset.s==='rejected')); if(!simple) $('note').focus(); return; }
     pendingReject = false; $('ask').hidden=true;
     if (prev && prev.handle!==me.handle && !(await confirmOverride(prev))) return;
-    if (await writeDecision(c, s, note)) { decisions.set(c.tid, Object.assign({}, prev||{}, {target_id:c.tid, status:s, note, handle:me.handle, decided_at:new Date().toISOString()})); setStatus(`${STATUS[s].label} · ${c.display}`); renderAll(); const nx=await nextForMe(cur+1); if(nx>=0) goTo(nx,false); else setStatus(simple ? 'All words in your range are done. Press Enter for the next range.' : 'Every word in this queue has a decision.'); }
+    if (await writeDecision(c, s, note, meta)) { decisions.set(c.tid, Object.assign({}, prev||{}, {target_id:c.tid, status:s, note, meta:meta||null, handle:me.handle, decided_at:new Date().toISOString()})); setStatus(`${STATUS[s].label} · ${c.display}`); renderAll(); const nx=await nextForMe(cur+1); if(nx>=0) goTo(nx,false); else setStatus(simple ? 'All words in your range are done. Press Enter for the next range.' : 'Every word in this queue has a decision.'); }
   }
   async function saveNoteOnly(){
     const c=C[cur]; const d=decisionOf(c); if(!d){ setStatus('Pick a status first; the note is saved with it.', true); return; }
     if (d.handle!==me.handle && !(await confirmOverride(d))) return;
-    if (await writeDecision(c, d.status, $('note').value.trim())) { d.note=$('note').value.trim(); d.handle=me.handle; setStatus('Note saved.'); renderAll(); }
+    if (await writeDecision(c, d.status, $('note').value.trim(), d.meta)) { d.note=$('note').value.trim(); d.handle=me.handle; setStatus('Note saved.'); renderAll(); }
   }
   async function clearDecision(){
     const c=C[cur]; const d=decisionOf(c); if(!d) return;
@@ -479,7 +498,9 @@ body.simple #moreBtn{display:inline-block}
   function exportJson(){
     const recs=[];
     for (const c of C){ const d=decisionOf(c); if(!d) continue;
-      recs.push({schema_version:'review-decision-v1', target_type:'entry', target_id:c.tid, source_id:Q.source_id, review_status:STATUS[d.status].repo, reviewer_id:d.handle, review_date:String(d.decided_at).slice(0,10), review_notes:d.note||STATUS[d.status].defaultNote||STATUS[d.status].label, evidence:[]}); }
+      const rec={schema_version:'review-decision-v1', target_type:'entry', target_id:c.tid, source_id:Q.source_id, review_status:STATUS[d.status].repo, reviewer_id:d.handle, review_date:String(d.decided_at).slice(0,10), review_notes:d.note||STATUS[d.status].defaultNote||STATUS[d.status].label, evidence:[]};
+      if (d.status==='metadata' && d.meta) rec.replacement_metadata = {display:d.meta.display, normalized:d.meta.normalized, flags:d.meta.flags||'', morphology:d.meta.morphology||[], part_of_speech:d.meta.part_of_speech};
+      recs.push(rec); }
     if (!recs.length){ setStatus('Nothing to export yet.', true); return; }
     const text=JSON.stringify({schema_version:'review-desk-export-v1', queue_id:QID, source_id:Q.source_id, source_revision:Q.source_revision, exported_at:new Date().toISOString(), decisions:recs}, null, 1);
     const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'application/json'})); a.download=`${QID}-decisions-${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove();
@@ -491,7 +512,14 @@ body.simple #moreBtn{display:inline-block}
   $('reasons').addEventListener('click', e=>{ const r=e.target.closest('.reason'); if(!r) return; const inp=$('note');
     if (pendingReject) { inp.value = r.dataset.r; decide('rejected'); return; }
     inp.value = inp.value ? inp.value+'; '+r.dataset.r : r.dataset.r; if (decisionOf(C[cur])) saveNoteOnly(); else inp.focus(); });
-  $('moreBtn').onclick = () => document.body.classList.toggle('more');
+  $('metaForm').onsubmit = e => { e.preventDefault(); const c=C[cur];
+    const display=$('metaDisplay').value.trim(); const pos=$('metaPos').value; const normalized=normalizeText(display);
+    if (!display) { $('metaErr').textContent='Spelling cannot be empty.'; return; }
+    if (!/^[\p{L}'’ -]{1,64}$/u.test(normalized)) { $('metaErr').textContent='Only letters, apostrophes, hyphens and spaces are allowed.'; return; }
+    if (display===c.display && pos===c.pos) { $('metaErr').textContent='Nothing changed. Use approved instead, or correct the spelling or part of speech.'; return; }
+    const morphology = pos===c.pos ? (c.morph ? c.morph.split(';') : []) : ['po:'+pos];
+    decide('metadata', {display, normalized, flags:c.flags||'', morphology, part_of_speech:pos}); };
+  $('metaCancel').onclick = () => { $('metaForm').hidden=true; renderFocus(); };
   $('detailsBtn').onclick = () => { simple = !simple; applyMode(); renderAll(); };
   $('saveNote').onclick=saveNoteOnly; $('clearDecision').onclick=clearDecision;
   $('prev').onclick=()=>goTo(cur-1); $('next').onclick=()=>goTo(cur+1);
@@ -502,9 +530,9 @@ body.simple #moreBtn{display:inline-block}
   $('nextOpenBlock').onclick=()=>{ for(let b=0;b<NB;b++){ const range=C.slice(b*BLOCK,(b+1)*BLOCK); if(!claims.get(b) && counts(range).pending>0){ goTo(b*BLOCK); return; } } setStatus('No unclaimed block with open words.'); };
   document.addEventListener('keydown', e=>{
     if ($('app').hidden) return;
-    if (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||document.querySelector('dialog[open]')) { if(e.key==='Escape') e.target.blur(); return; }
+    if (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT'||document.querySelector('dialog[open]')) { if(e.key==='Escape') e.target.blur(); return; }
     if (e.metaKey||e.ctrlKey||e.altKey) return;
-    const map={'1':'approved','2':'rejected','3':'experimental','4':'linguist','5':'source'};
+    const map={'1':'approved','2':'metadata','3':'rejected','4':'experimental','5':'linguist','6':'source'};
     if (map[e.key]) { e.preventDefault(); decide(map[e.key]); }
     else if (e.key==='ArrowLeft') { e.preventDefault(); goTo(cur-1,false); }
     else if (e.key==='ArrowRight') { e.preventDefault(); goTo(cur+1,false); }

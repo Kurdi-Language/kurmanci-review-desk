@@ -15,8 +15,9 @@ create table if not exists public.decisions (
   target_id   text not null check (target_id ~ '^[0-9a-f]{64}$'),
   rank        integer not null,
   display     text not null,
-  status      text not null check (status in ('approved','rejected','experimental','linguist','source')),
+  status      text not null check (status in ('approved','metadata','rejected','experimental','linguist','source')),
   note        text not null default '',
+  meta        jsonb,
   reviewer_id uuid not null references auth.users(id),
   handle      text not null,
   decided_at  timestamptz not null default now(),
@@ -35,6 +36,7 @@ create table if not exists public.decision_history (
   decided_at  timestamptz not null,
   replaced_by text not null,
   action      text not null check (action in ('update','delete')),
+  meta        jsonb,
   replaced_at timestamptz not null default now()
 );
 
@@ -61,9 +63,13 @@ begin
   if new.status = 'rejected' and length(trim(new.note)) = 0 then
     raise exception 'A rejection needs a reason.';
   end if;
+  if new.status = 'metadata' and (new.meta is null or coalesce(new.meta->>'display','') = '') then
+    raise exception 'Approved with metadata change needs the corrected metadata.';
+  end if;
+  if new.status <> 'metadata' then new.meta := null; end if;
   if tg_op = 'UPDATE' then
-    insert into public.decision_history (queue_id, target_id, status, note, handle, reviewer_id, decided_at, replaced_by, action)
-    values (old.queue_id, old.target_id, old.status, old.note, old.handle, old.reviewer_id, old.decided_at, h, 'update');
+    insert into public.decision_history (queue_id, target_id, status, note, handle, reviewer_id, decided_at, replaced_by, action, meta)
+    values (old.queue_id, old.target_id, old.status, old.note, old.handle, old.reviewer_id, old.decided_at, h, 'update', old.meta);
   end if;
   return new;
 end $$;
@@ -73,8 +79,8 @@ language plpgsql security definer set search_path = public as $$
 declare h text;
 begin
   select handle into h from public.reviewers where user_id = auth.uid();
-  insert into public.decision_history (queue_id, target_id, status, note, handle, reviewer_id, decided_at, replaced_by, action)
-  values (old.queue_id, old.target_id, old.status, old.note, old.handle, old.reviewer_id, old.decided_at, coalesce(h, 'unknown'), 'delete');
+  insert into public.decision_history (queue_id, target_id, status, note, handle, reviewer_id, decided_at, replaced_by, action, meta)
+  values (old.queue_id, old.target_id, old.status, old.note, old.handle, old.reviewer_id, old.decided_at, coalesce(h, 'unknown'), 'delete', old.meta);
   return old;
 end $$;
 
@@ -144,5 +150,5 @@ exception when duplicate_object then null; end $$;
 
 -- Handy export view (Table Editor → decisions_export → Export CSV / or used by the site).
 create or replace view public.decisions_export as
-  select queue_id, rank, target_id, display, status, note, handle, decided_at
+  select queue_id, rank, target_id, display, status, note, meta, handle, decided_at
   from public.decisions order by queue_id, rank;
