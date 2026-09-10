@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="ku">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kurmancî Review Desk</title>
+<title>Nirxandina Peyvên Kurmancî</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -158,126 +158,118 @@ body.simple .tbl .hd{font-size:13px}
 .metaform .full{grid-column:1 / -1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .metaform .err{color:var(--bad);font-size:13px}
 @media (max-width:700px){.decide{grid-template-columns:repeat(2,minmax(0,1fr))}.metaform{grid-template-columns:1fr}}
+
+.langbtn{font-family:"IBM Plex Mono",monospace;font-size:12px}
 </style>
 </head>
 <body>
-
 <header class="top">
-  <div class="brand"><h1>Kurmancî Review Desk</h1><span class="letters">ç ê î ş û</span></div>
-  <span class="chip"><span class="eyebrow">Queue</span> <b id="queueName">—</b></span>
-  <span class="chip" id="reviewerChip" hidden><span class="eyebrow">Reviewer</span> <b id="reviewerName">—</b></span>
-  <span class="chip" id="mineChip" hidden><span class="eyebrow">Your words</span> <b id="mineText">—</b></span>
-  <button class="btn quiet" id="detailsBtn" hidden>Show details</button>
-  <button class="btn" id="exportBtn" hidden>Export decisions</button>
-  <button class="btn quiet" id="signOut" hidden>Sign out</button>
+  <div class="brand"><h1 data-i18n="title">Nirxandina Peyvên Kurmancî</h1><span class="letters">ç ê î ş û</span></div>
+  <span class="chip"><span class="eyebrow" data-i18n="queue">Lîste</span> <b id="queueName">—</b></span>
+  <span class="chip" id="reviewerChip" hidden><span class="eyebrow" data-i18n="reviewer">Nirxîner</span> <b id="reviewerName">—</b></span>
+  <span class="chip" id="mineChip" hidden><span class="eyebrow" data-i18n="mine">Peyvên te</span> <b id="mineText">—</b></span>
+  <button class="btn quiet" id="detailsBtn" hidden></button>
+  <button class="btn" id="exportBtn" hidden data-i18n="export">Biryaran dakêşe</button>
+  <button class="btn quiet" id="signOut" hidden data-i18n="signOut">Derkeve</button>
+  <button class="btn quiet langbtn" id="langBtn" data-i18n="lang">English</button>
 </header>
 
-<div id="configMissing" class="banner" hidden>This copy of the site has no database configured yet. Edit <span class="mono">config.js</span> with your Supabase project URL and anon key.</div>
+<div id="configMissing" class="banner" hidden data-i18n="configMissing"></div>
 
-<!-- sign in -->
 <section class="gate" id="loginCard" hidden>
-  <h2>Sign in</h2>
-  <p>Access is by invitation. Use the email address that received your invitation.</p>
+  <h2 data-i18n="loginTitle">Têkeve</h2>
+  <p data-i18n="loginText"></p>
   <form id="loginForm">
-    <label for="loginEmail">Email</label><input type="email" id="loginEmail" autocomplete="username" required>
-    <label for="loginPassword">Password</label><input type="password" id="loginPassword" autocomplete="current-password" required>
+    <label for="loginEmail" data-i18n="email">E-name</label><input type="email" id="loginEmail" autocomplete="username" required>
+    <label for="loginPassword" data-i18n="password">Şîfre</label><input type="password" id="loginPassword" autocomplete="current-password" required>
     <div class="err" id="loginErr"></div>
-    <div class="row"><button class="btn quiet" type="button" id="forgotBtn">Forgot password</button><button class="btn primary" type="submit">Sign in</button></div>
+    <div class="row"><button class="btn quiet" type="button" id="forgotBtn" data-i18n="forgot">Şîfre ji bîr kir?</button><button class="btn primary" type="submit" data-i18n="signIn">Têkeve</button></div>
   </form>
 </section>
 
-<!-- first visit: handle (+ password when arriving from an invitation or reset link) -->
 <section class="gate" id="onboardCard" hidden>
-  <h2>Welcome</h2>
-  <p>Choose the reviewer handle the project will record on every decision you make. Lowercase letters, digits, and hyphens; it cannot be changed later.</p>
+  <h2 data-i18n="welcomeTitle">Bi xêr hatî</h2>
+  <p data-i18n="welcomeText"></p>
   <form id="onboardForm">
-    <label for="handleInput">Reviewer handle</label><input type="text" id="handleInput" placeholder="e.g. ferhatguneri" autocomplete="off" spellcheck="false" required>
+    <label for="handleInput" data-i18n="handle">Navê nirxîner</label><input type="text" id="handleInput" autocomplete="off" spellcheck="false" required>
     <div id="pwFields">
-      <label for="pwInput">Set a password (8+ characters)</label><input type="password" id="pwInput" autocomplete="new-password" minlength="8">
+      <label for="pwInput" data-i18n="setPassword"></label><input type="password" id="pwInput" autocomplete="new-password" minlength="8">
     </div>
     <div class="err" id="onboardErr"></div>
-    <div class="row"><span></span><button class="btn primary" type="submit">Start reviewing</button></div>
+    <div class="row"><span></span><button class="btn primary" type="submit" data-i18n="start">Dest bi nirxandinê bike</button></div>
   </form>
 </section>
 
-<!-- password reset landing -->
 <section class="gate" id="resetCard" hidden>
-  <h2>New password</h2>
+  <h2 data-i18n="newPasswordTitle">Şîfreya nû</h2>
   <form id="resetForm">
-    <label for="resetPw">Password (8+ characters)</label><input type="password" id="resetPw" autocomplete="new-password" minlength="8" required>
+    <label for="resetPw" data-i18n="newPassword"></label><input type="password" id="resetPw" autocomplete="new-password" minlength="8" required>
     <div class="err" id="resetErr"></div>
-    <div class="row"><span></span><button class="btn primary" type="submit">Save password</button></div>
+    <div class="row"><span></span><button class="btn primary" type="submit" data-i18n="savePassword">Şîfreyê tomar bike</button></div>
   </form>
 </section>
 
 <div class="wrap" id="app" hidden>
   <aside class="rail">
     <section class="panel">
-      <div class="hd"><span class="eyebrow">Progress</span><span class="num" id="progressText">0 / 0</span></div>
+      <div class="hd"><span class="eyebrow" data-i18n="progress">Pêşketin</span><span class="num" id="progressText">0 / 0</span></div>
       <div class="bd progress"><div class="bar" id="progressBar"></div><div class="legend" id="legend"></div></div>
     </section>
     <section class="panel">
-      <div class="hd"><span class="eyebrow">Blocks of 50</span><button class="btn quiet" id="nextOpenBlock" style="padding:0 6px;font-size:12.5px">next unclaimed</button></div>
+      <div class="hd"><span class="eyebrow" data-i18n="blocks">Komên 50 peyvan</span><button class="btn quiet" id="nextOpenBlock" style="padding:0 6px;font-size:12.5px" data-i18n="nextOpenBlock">koma vala ya pêş</button></div>
       <div class="blocks" id="blocks"></div>
     </section>
   </aside>
 
   <main>
     <section class="focus" id="focus" aria-live="polite">
-      <div class="meta"><span class="rank">rank <b id="rank">—</b> of <span id="total">—</span></span><span id="decidedBy"></span></div>
+      <div class="meta"><span class="rank"><span data-i18n="rank">rêz</span> <b id="rank">—</b> <span data-i18n="of">ji</span> <span id="total">—</span></span><span id="decidedBy"></span></div>
       <div class="word" id="word">—</div>
       <div class="facts" id="facts"></div>
-      <div class="note-hint"><b>Approved</b> means the word <em>and</em> the imported part of speech shown above are both right. If the word is right but the spelling or part of speech is wrong and you know the correct one, use <b>Approved, metadata corrected</b>. If you are not certain, use <b>Needs linguist</b>.</div>
+      <div class="note-hint" id="hint"></div>
       <div class="decide" id="decide">
-        <button class="dbtn" data-s="approved"><span class="head"><span class="t">Approved</span><span class="key">1</span></span><span class="code">approved</span><span class="s">Valid Kurmancî word; spelling and part of speech are right</span></button>
-        <button class="dbtn" data-s="metadata"><span class="head"><span class="t">Approved, metadata corrected</span><span class="key">2</span></span><span class="code">approved_with_metadata_change</span><span class="s">Valid word, but the spelling or part of speech must be corrected</span></button>
-        <button class="dbtn" data-s="rejected"><span class="head"><span class="t">Rejected</span><span class="key">3</span></span><span class="code">rejected_from_default_pack</span><span class="s">Keep out of the default pack; reason required</span></button>
-        <button class="dbtn" data-s="experimental"><span class="head"><span class="t">Experimental only</span><span class="key">4</span></span><span class="code">experimental_only</span><span class="s">Keep in experimental data, not in the reviewed pack</span></button>
-        <button class="dbtn" data-s="linguist"><span class="head"><span class="t">Needs linguist</span><span class="key">5</span></span><span class="code">needs_linguist</span><span class="s">Unresolved linguistic uncertainty; a specialist must decide</span></button>
-        <button class="dbtn" data-s="source"><span class="head"><span class="t">Needs source investigation</span><span class="key">6</span></span><span class="code">needs_source_investigation</span><span class="s">Provenance or attestation must be checked first</span></button>
+        <button class="dbtn" data-s="approved"><span class="head"><span class="t"></span><span class="key">1</span></span><span class="code">approved</span><span class="s"></span></button>
+        <button class="dbtn" data-s="metadata"><span class="head"><span class="t"></span><span class="key">2</span></span><span class="code">approved_with_metadata_change</span><span class="s"></span></button>
+        <button class="dbtn" data-s="rejected"><span class="head"><span class="t"></span><span class="key">3</span></span><span class="code">rejected_from_default_pack</span><span class="s"></span></button>
+        <button class="dbtn" data-s="experimental"><span class="head"><span class="t"></span><span class="key">4</span></span><span class="code">experimental_only</span><span class="s"></span></button>
+        <button class="dbtn" data-s="linguist"><span class="head"><span class="t"></span><span class="key">5</span></span><span class="code">needs_linguist</span><span class="s"></span></button>
+        <button class="dbtn" data-s="source"><span class="head"><span class="t"></span><span class="key">6</span></span><span class="code">needs_source_investigation</span><span class="s"></span></button>
       </div>
       <form class="metaform" id="metaForm" hidden>
-        <div><label for="metaDisplay">Corrected spelling</label><input type="text" id="metaDisplay" autocomplete="off" spellcheck="false"></div>
-        <div><label for="metaPos">Corrected part of speech</label><select id="metaPos"></select></div>
-        <div class="full"><button class="btn primary" type="submit">Save corrected metadata</button><button class="btn quiet" type="button" id="metaCancel">Cancel</button><span class="err" id="metaErr"></span></div>
+        <div><label for="metaDisplay" data-i18n="metaDisplay"></label><input type="text" id="metaDisplay" autocomplete="off" spellcheck="false"></div>
+        <div><label for="metaPos" data-i18n="metaPos"></label><select id="metaPos"></select></div>
+        <div class="full"><button class="btn primary" type="submit" data-i18n="metaSave"></button><button class="btn quiet" type="button" id="metaCancel" data-i18n="cancel"></button><span class="err" id="metaErr"></span></div>
       </form>
       <div class="noterow">
-        <input type="text" id="note" placeholder="Note (required for Reject; optional otherwise). Press N to focus." autocomplete="off">
-        <button class="btn" id="saveNote">Save note</button>
-        <button class="btn quiet" id="clearDecision" title="Remove decision (Backspace)">Clear</button>
+        <input type="text" id="note" autocomplete="off">
+        <button class="btn" id="saveNote" data-i18n="saveNote"></button>
+        <button class="btn quiet" id="clearDecision" data-i18n="clear"></button>
       </div>
       <div class="ask" id="ask" hidden></div>
       <div class="reasons" id="reasons"></div>
       <div class="status-line" id="statusLine"></div>
-      <button class="btn" id="undoBtn" type="button" hidden style="margin-top:6px">↶ Undo last decision</button>
+      <button class="btn" id="undoBtn" type="button" hidden style="margin-top:6px"></button>
       <div class="navrow">
-        <button class="btn" id="prev">← Prev</button>
-        <button class="btn" id="next">Next →</button>
-        <button class="btn primary" id="nextOpen">Next undecided ↵</button>
+        <button class="btn" id="prev" data-i18n="prev"></button>
+        <button class="btn" id="next" data-i18n="next"></button>
+        <button class="btn primary" id="nextOpen" data-i18n="nextOpen"></button>
         <span class="spacer"></span>
-        <button class="btn" id="claimBtn">Claim this block</button>
+        <button class="btn" id="claimBtn"></button>
       </div>
       <details class="guide">
-        <summary>How to decide, keyboard keys, and what each status means</summary>
+        <summary data-i18n="guideSummary"></summary>
         <div class="bd">
-          <p>You are the trust boundary. Nothing here is approved by software; every status you pick becomes a human decision recorded under your reviewer handle. Counts show how many Kurmancî Wikipedia articles contain the word. They tell you what to look at first, not whether the word is correct.</p>
-          <dl>
-            <dt>approved</dt><dd>The imported entry and its metadata are accepted as-is for the reviewed pack.</dd>
-            <dt>approved_with_metadata_change</dt><dd>The word is valid but the spelling or part of speech must be replaced. Use it only when you know the correct replacement.</dd>
-            <dt>rejected_from_default_pack</dt><dd>Must not enter the default pack. Foreign word, foreign proper name, misspelling, fragment. A reason is required.</dd>
-            <dt>experimental_only</dt><dd>May stay in experimental data but not in the reviewed pack.</dd>
-            <dt>needs_linguist</dt><dd>Unresolved linguistic uncertainty; a specialist must decide.</dd>
-            <dt>needs_source_investigation</dt><dd>The candidate needs stronger attestation or provenance before a decision.</dd>
-          </dl>
-          <p>Keys: <b>1–6</b> decide, <b>Backspace</b> clear, <b>←/→</b> move, <b>Enter</b> next undecided, <b>N</b> note. In the simple view the site reserves a range of 50 words for you and moves to the next range when you finish; in the detailed view you claim blocks yourself.</p>
+          <p id="guideIntro"></p>
+          <dl id="guideList"></dl>
+          <p id="guideKeys"></p>
         </div>
       </details>
     </section>
 
     <section class="panel tbl">
-      <div class="hd"><span class="eyebrow">Block <span id="blockLabel">—</span></span><span id="blockClaim" style="font-size:13px;color:var(--muted)"></span></div>
+      <div class="hd"><span class="eyebrow"><span data-i18n="block">Kom</span> <span id="blockLabel">—</span></span><span id="blockClaim" style="font-size:13px;color:var(--muted)"></span></div>
       <div class="tblwrap"><table>
-        <thead><tr><th>#</th><th>Word</th><th>Part of speech</th><th class="num">Articles</th><th>Decision</th><th>By</th></tr></thead>
+        <thead><tr><th>#</th><th data-i18n="thWord"></th><th data-i18n="thPos"></th><th class="num" data-i18n="thDocs"></th><th data-i18n="thDecision"></th><th data-i18n="thBy"></th></tr></thead>
         <tbody id="rows"></tbody>
       </table></div>
     </section>
@@ -285,17 +277,17 @@ body.simple .tbl .hd{font-size:13px}
 </div>
 
 <dialog id="overrideDialog">
-  <h2>Change another reviewer's decision?</h2>
+  <h2 data-i18n="overrideTitle"></h2>
   <p id="overrideText"></p>
-  <div class="row"><button class="btn" id="overrideNo">Keep theirs</button><button class="btn primary" id="overrideYes">Replace with mine</button></div>
+  <div class="row"><button class="btn" id="overrideNo" data-i18n="keepTheirs"></button><button class="btn primary" id="overrideYes" data-i18n="replaceMine"></button></div>
 </dialog>
 
 <script>
-  // Capture the auth link type before the client consumes the URL hash.
   window.__authLinkType = (new URLSearchParams((location.hash || '').replace(/^#/, ''))).get('type') || '';
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
+<script src="lang.js"></script>
 <script src="queue-hunspell-kuwiki-001.js"></script>
 <script>
 (function(){
@@ -305,70 +297,73 @@ body.simple .tbl .hd{font-size:13px}
   const C = RAW.candidates.map(a => ({rank:a[0], tid:a[1], display:a[2], normalized:a[3]||a[2].toLowerCase(), pos:a[4], morph:a[5], flags:a[6], line:a[7], docs:a[8], toks:a[9], audit:a[10]}));
   const N = C.length, NB = Math.ceil(N / BLOCK);
   const byTid = new Map(C.map((c,i)=>[c.tid,i]));
-  const STATUS = {
-    approved:     {label:'Approved',                     repo:'approved',                      cls:'approved',     defaultNote:'Human-approved lexical entry; imported Hunspell metadata accepted as-is.'},
-    metadata:     {label:'Approved, metadata corrected', repo:'approved_with_metadata_change', cls:'metadata',     defaultNote:'Human-approved lexical entry with corrected metadata.'},
-    rejected:     {label:'Rejected',                     repo:'rejected_from_default_pack',    cls:'rejected',     defaultNote:''},
-    experimental: {label:'Experimental only',            repo:'experimental_only',             cls:'experimental', defaultNote:'Human review: retain only in experimental vocabulary.'},
-    linguist:     {label:'Needs linguist',               repo:'needs_linguist',                cls:'linguist',     defaultNote:'Needs linguist'},
-    source:       {label:'Needs source investigation',   repo:'needs_source_investigation',    cls:'source',       defaultNote:'Needs source investigation'},
-  };
   const ORDER = ['approved','metadata','rejected','experimental','linguist','source'];
+  const REPO = {approved:'approved', metadata:'approved_with_metadata_change', rejected:'rejected_from_default_pack', experimental:'experimental_only', linguist:'needs_linguist', source:'needs_source_investigation'};
+  const DEFAULT_NOTE = {approved:'Human-approved lexical entry; imported Hunspell metadata accepted as-is.', metadata:'Human-approved lexical entry with corrected metadata.', rejected:'', experimental:'Human review: retain only in experimental vocabulary.', linguist:'Needs linguist', source:'Needs source investigation'};
   const POS_VALUES = ['noun_fem','noun_masc','noun_fem_masc','noun','adjective','adverb','verb','propn','num','sconj','adp','pronoun','intj','adj_adv'];
-  const normalizeText = t => Array.from(t).filter(ch => !/[\p{C}]/u.test(ch) && ch!=='\u200B' && ch!=='\uFEFF').join('').normalize('NFC').toLowerCase();
-  const REASONS = {
-    rejected:['Foreign word','Foreign proper name','Foreign place name','Misspelling / non-standard form','Fragment, affix, or clitic only','Abbreviation or code','Inflected form, not a lemma'],
-    linguist:['Word valid, part of speech wrong','Dialectal; standard form unclear','Spelling uncertain','Unsure if it is a word'],
-    experimental:['Slang or colloquial','Rare or technical'],
-    source:['Cannot find outside this source','Looks like an import artifact'],
-    approved:[], metadata:[]
-  };
-  const POS = {noun_fem:'noun, feminine',noun_masc:'noun, masculine',noun_fem_masc:'noun, fem./masc.',noun:'noun',adjective:'adjective',adverb:'adverb',verb:'verb',propn:'proper noun',num:'numeral',numeral:'numeral',sconj:'conjunction',adp:'preposition / adposition',pronoun:'pronoun',intj:'interjection',adj_adv:'adjective / adverb',punctuation:'punctuation',unknown:'unknown'};
+  const normalizeText = t => Array.from(t).filter(ch => !/[\p{C}]/u.test(ch) && ch!=='​' && ch!=='﻿').join('').normalize('NFC').toLowerCase();
   const fmt = n => Number(n).toLocaleString('en-US');
   const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
   const blockOf = i => Math.floor(i / BLOCK);
 
+  // ---------- language ----------
+  const LANGS = window.REVIEW_DESK_LANG; let lang = 'ku';
+  try { lang = localStorage.getItem('krd.lang') === 'en' ? 'en' : 'ku'; } catch(e){}
+  let L = LANGS[lang];
+  const t = (key, vars) => { let s = L[key]; if (s == null) s = LANGS.en[key] || key; if (vars) for (const k in vars) s = s.split('{'+k+'}').join(vars[k]); return s; };
+  const label = s => L.status[s].label;
+  const posName = p => L.pos[p] || p;
+  function applyLang(){
+    L = LANGS[lang]; document.documentElement.lang = lang;
+    document.title = t('title');
+    document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.dataset.i18n; if (k==='hint'||k==='guideKeys') el.innerHTML = t(k); else el.textContent = t(k); });
+    $('hint').innerHTML = t('hint');
+    $('handleInput').placeholder = t('handlePlaceholder'); $('note').placeholder = t('notePlaceholder'); $('clearDecision').title = t('clearTitle');
+    document.querySelectorAll('.dbtn').forEach(b => { b.querySelector('.t').textContent = L.status[b.dataset.s].label; b.querySelector('.s').textContent = L.status[b.dataset.s].desc; });
+    $('guideIntro').textContent = t('guideIntro'); $('guideKeys').innerHTML = t('guideKeys');
+    $('guideList').innerHTML = ORDER.map(s => `<dt>${esc(label(s))} <span class="code" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted)">${REPO[s]}</span></dt><dd>${esc(L.guide[s])}</dd>`).join('');
+    $('detailsBtn').textContent = simple ? t('showDetails') : t('simpleView');
+    try { localStorage.setItem('krd.lang', lang); } catch(e){}
+  }
+
   // ---------- state ----------
-  let sb = null, session = null, me = null;         // me = {id, handle}
-  const decisions = new Map();                       // target_id -> row
-  const claims = new Map();                          // block_no -> row
+  let sb = null, session = null, me = null;
+  const decisions = new Map(), claims = new Map();
   let cur = 0;
   try { const s = parseInt(localStorage.getItem('krd.cur.'+QID),10); if(!isNaN(s) && s>=0 && s<N) cur = s; } catch(e){}
   let simple = true;
   try { simple = localStorage.getItem('krd.simple') !== 'off'; } catch(e){}
-  let pendingReject = false;
-  let last = null;   // {i, prev} for undo
-  function applyMode(){ document.body.classList.toggle('simple', simple); $('detailsBtn').textContent = simple ? 'Show details' : 'Simple view'; try{localStorage.setItem('krd.simple', simple?'on':'off');}catch(e){} }
-  function myBlocks(){ const out=[]; for (const [b,cl] of claims) if (me && cl.handle===me.handle) out.push(b); return out.sort((a,b)=>a-b); }
-  function pendingIn(b){ return counts(C.slice(b*BLOCK,(b+1)*BLOCK)).pending; }
-  async function ensureMyBlock(){
-    // simple mode: work inside blocks claimed by me; claim the next open one when mine are finished
-    for (const b of myBlocks()) if (pendingIn(b)>0) return b;
-    for (let b=0;b<NB;b++){ if (!claims.get(b) && pendingIn(b)>0){ const {error}=await sb.from('block_claims').upsert({queue_id:QID, block_no:b},{onConflict:'queue_id,block_no'}); if(!error){ claims.set(b,{block_no:b,handle:me.handle}); return b; } } }
-    return -1;
-  }
-  function renderMine(){
-    const bs = myBlocks(); if (!bs.length){ $('mineText').textContent='none yet'; return; }
-    const b = bs.find(x=>pendingIn(x)>0); const shown = b==null ? bs[bs.length-1] : b; const range=C.slice(shown*BLOCK,(shown+1)*BLOCK);
-    $('mineText').textContent = `${fmt(range[0].rank)}–${fmt(range[range.length-1].rank)} · ${range.length-pendingIn(shown)} of ${range.length} done`;
-  }
+  let pendingReject = false, last = null;
   const decisionOf = c => decisions.get(c.tid) || null;
   function counts(range){ const k={approved:0,metadata:0,rejected:0,experimental:0,linguist:0,source:0,pending:0}; for(const c of range){const d=decisionOf(c); k[d?d.status:'pending']++;} return k; }
   function show(id){ for (const s of ['loginCard','onboardCard','resetCard','app']) $(s).hidden = (s !== id); }
   function setStatus(msg, warn){ const el=$('statusLine'); el.textContent=msg||''; el.classList.toggle('warn',!!warn); }
+  function applyMode(){ document.body.classList.toggle('simple', simple); $('detailsBtn').textContent = simple ? t('showDetails') : t('simpleView'); try{localStorage.setItem('krd.simple', simple?'on':'off');}catch(e){} }
+  function myBlocks(){ const out=[]; for (const [b,cl] of claims) if (me && cl.handle===me.handle) out.push(b); return out.sort((a,b)=>a-b); }
+  function pendingIn(b){ return counts(C.slice(b*BLOCK,(b+1)*BLOCK)).pending; }
+  async function ensureMyBlock(){
+    for (const b of myBlocks()) if (pendingIn(b)>0) return b;
+    for (let b=0;b<NB;b++){ if (!claims.get(b) && pendingIn(b)>0){ const {error}=await sb.from('block_claims').upsert({queue_id:QID, block_no:b},{onConflict:'queue_id,block_no'}); if(!error){ claims.set(b,{block_no:b,handle:me.handle}); return b; } } }
+    return -1;
+  }
 
   // ---------- render ----------
+  function renderMine(){
+    const bs = myBlocks(); if (!bs.length){ $('mineText').textContent=t('mineNone'); return; }
+    const b = bs.find(x=>pendingIn(x)>0); const shown = b==null ? bs[bs.length-1] : b; const range=C.slice(shown*BLOCK,(shown+1)*BLOCK);
+    $('mineText').textContent = t('mineText', {from:fmt(range[0].rank), to:fmt(range[range.length-1].rank), done:range.length-pendingIn(shown), n:range.length});
+  }
   function renderProgress(){
     const k = counts(C); const done = N - k.pending;
     $('progressText').textContent = fmt(done)+' / '+fmt(N);
     $('progressBar').innerHTML = ORDER.concat('pending').map(s=>`<span class="d-${s}" style="width:${(k[s]/N*100).toFixed(2)}%"></span>`).join('');
-    $('legend').innerHTML = ORDER.concat('pending').map(s=>`<span class="k"><i class="dot d-${s}"></i>${s==='pending'?'Undecided':STATUS[s].label}</span><span class="num">${fmt(k[s])}</span>`).join('');
+    $('legend').innerHTML = ORDER.concat('pending').map(s=>`<span class="k"><i class="dot d-${s}"></i>${esc(s==='pending'?t('undecided'):label(s))}</span><span class="num">${fmt(k[s])}</span>`).join('');
   }
   function renderBlocks(){
     const b0 = blockOf(cur); let html='';
     for (let b=0;b<NB;b++){
       const range=C.slice(b*BLOCK,(b+1)*BLOCK); const k=counts(range); const done=range.length-k.pending; const cl=claims.get(b);
-      html += `<button class="blk${b===b0?' active':''}" data-b="${b}"><span class="n num">${String(b+1).padStart(3,'0')}</span><span><span class="range num">${fmt(range[0].rank)}–${fmt(range[range.length-1].rank)}</span><span class="mini"><span style="width:${(done/range.length*100).toFixed(0)}%"></span></span></span><span class="who${cl&&me&&cl.handle===me.handle?' me':''}">${cl?esc(cl.handle):(done===range.length?'done':'open')}</span></button>`;
+      html += `<button class="blk${b===b0?' active':''}" data-b="${b}"><span class="n num">${String(b+1).padStart(3,'0')}</span><span><span class="range num">${fmt(range[0].rank)}–${fmt(range[range.length-1].rank)}</span><span class="mini"><span style="width:${(done/range.length*100).toFixed(0)}%"></span></span></span><span class="who${cl&&me&&cl.handle===me.handle?' me':''}">${cl?esc(cl.handle):(done===range.length?t('done'):t('open'))}</span></button>`;
     }
     $('blocks').innerHTML = html;
   }
@@ -376,31 +371,31 @@ body.simple .tbl .hd{font-size:13px}
     const c=C[cur]; const d=decisionOf(c);
     $('rank').textContent=fmt(c.rank); $('total').textContent=fmt(N);
     $('word').innerHTML = esc(c.display) + (c.normalized!==c.display?`<small>${esc(c.normalized)}</small>`:'');
-    $('decidedBy').innerHTML = d ? `<span class="pill p-${STATUS[d.status].cls}">${STATUS[d.status].label}</span> by <b>${esc(d.handle)}</b> · ${String(d.decided_at).slice(0,10)}${d.status==='metadata'&&d.meta?` · corrected to <b>${esc(d.meta.display)}</b> (${esc(POS[d.meta.part_of_speech]||d.meta.part_of_speech)})`:''}` : '<span class="pill p-pending">Undecided</span>';
+    $('decidedBy').innerHTML = d ? `<span class="pill p-${d.status}">${esc(label(d.status))}</span> ${esc(t('by'))} <b>${esc(d.handle)}</b> · ${String(d.decided_at).slice(0,10)}${d.status==='metadata'&&d.meta?` · ${esc(t('correctedTo'))} <b>${esc(d.meta.display)}</b> (${esc(posName(d.meta.part_of_speech))})`:''}` : `<span class="pill p-pending">${esc(t('undecided'))}</span>`;
     $('metaForm').hidden = true; $('metaErr').textContent='';
     const facts=[
-      ['Part of speech (imported, unverified)', esc(POS[c.pos]||c.pos)],
-      ['Hunspell morphology', `<span class="mono">${esc(c.morph||'—')}</span>`],
-      ['Wikipedia articles containing it', `<span class="num">${fmt(c.docs)}</span> <span style="color:var(--muted)">· ${fmt(c.toks)} occurrences</span>`],
-      ['Hunspell source line', `<span class="mono">kmr-Latn.dic:${esc(c.line)}</span>${c.flags?` <span class="mono" style="color:var(--muted)">flags ${esc(c.flags)}</span>`:''}`],
+      [t('factPos'), esc(posName(c.pos))],
+      [t('factMorph'), `<span class="mono">${esc(c.morph||'—')}</span>`],
+      [t('factDocs'), `<span class="num">${fmt(c.docs)}</span> <span style="color:var(--muted)">· ${fmt(c.toks)} ${esc(t('occurrences'))}</span>`],
+      [t('factLine'), `<span class="mono">kmr-Latn.dic:${esc(c.line)}</span>${c.flags?` <span class="mono" style="color:var(--muted)">${esc(t('flags'))} ${esc(c.flags)}</span>`:''}`],
     ];
-    if (c.audit) facts.push(['Audit flags', c.audit.split(',').map(a=>`<span class="flag">${esc(a)}</span>`).join('')]);
-    if (/^[A-ZÇÊÎŞÛ]/.test(c.display)) facts.push(['Capitalized in source','Possibly a proper noun']);
-    $('facts').innerHTML = facts.map(([l,v])=>`<div class="fact"><div class="l">${l}</div><div class="v">${v}</div></div>`).join('');
+    if (c.audit) facts.push([t('factAudit'), c.audit.split(',').map(a=>`<span class="flag">${esc(a)}</span>`).join('')]);
+    if (/^[A-ZÇÊÎŞÛ]/.test(c.display)) facts.push([t('factCap'), esc(t('capHint'))]);
+    $('facts').innerHTML = facts.map(([l,v])=>`<div class="fact"><div class="l">${esc(l)}</div><div class="v">${v}</div></div>`).join('');
     document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', !!d && d.status===b.dataset.s));
     $('note').value = d && d.note ? d.note : '';
     renderReasons(d?d.status:null);
     const cl = claims.get(blockOf(cur));
-    $('claimBtn').textContent = cl ? (me && cl.handle===me.handle ? 'Release this block' : `Claimed by ${cl.handle}`) : 'Claim this block';
+    $('claimBtn').textContent = cl ? (me && cl.handle===me.handle ? t('release') : t('claimedBy',{who:cl.handle})) : t('claim');
     try { localStorage.setItem('krd.cur.'+QID, String(cur)); } catch(e){}
   }
-  function renderReasons(s){ $('reasons').innerHTML = (s?REASONS[s]:[]).map(r=>`<button class="reason" type="button" data-r="${esc(r)}">${esc(r)}</button>`).join(''); }
+  function renderReasons(s){ $('reasons').innerHTML = (s && L.reasons[s] ? L.reasons[s] : []).map(r=>`<button class="reason" type="button" data-r="${esc(r)}">${esc(r)}</button>`).join(''); }
   function renderTable(){
     const b=blockOf(cur); const range=C.slice(b*BLOCK,(b+1)*BLOCK); const cl=claims.get(b);
-    $('blockLabel').textContent = String(b+1).padStart(3,'0')+' · ranks '+fmt(range[0].rank)+'–'+fmt(range[range.length-1].rank);
-    $('blockClaim').textContent = cl ? 'claimed by '+cl.handle : 'unclaimed';
+    $('blockLabel').textContent = String(b+1).padStart(3,'0')+' · '+t('ranks')+' '+fmt(range[0].rank)+'–'+fmt(range[range.length-1].rank);
+    $('blockClaim').textContent = cl ? t('claimedShort',{who:cl.handle}) : t('unclaimed');
     $('rows').innerHTML = range.map(c=>{const d=decisionOf(c); const i=byTid.get(c.tid);
-      return `<tr class="row${i===cur?' cur':''}" data-i="${i}"><td class="num" style="color:var(--muted)">${fmt(c.rank)}</td><td class="w">${esc(c.display)}</td><td>${esc(POS[c.pos]||c.pos)}</td><td class="num">${fmt(c.docs)}</td><td>${d?`<span class="pill p-${STATUS[d.status].cls}">${STATUS[d.status].label}</span>`:'<span class="pill p-pending">—</span>'}</td><td class="by">${d?esc(d.handle):''}</td></tr>`;}).join('');
+      return `<tr class="row${i===cur?' cur':''}" data-i="${i}"><td class="num" style="color:var(--muted)">${fmt(c.rank)}</td><td class="w">${esc(c.display)}</td><td>${esc(posName(c.pos))}</td><td class="num">${fmt(c.docs)}</td><td>${d?`<span class="pill p-${d.status}">${esc(label(d.status))}</span>`:'<span class="pill p-pending">—</span>'}</td><td class="by">${d?esc(d.handle):''}</td></tr>`;}).join('');
   }
   function renderAll(){ renderProgress(); renderBlocks(); renderFocus(); renderTable(); renderMine(); }
   function goTo(i, scroll){ if(i<0||i>=N) return; pendingReject=false; $('ask').hidden=true; const cb=blockOf(i)!==blockOf(cur); cur=i; renderFocus(); if(cb) renderBlocks(); renderTable(); if(scroll!==false) window.scrollTo({top:0,behavior:'smooth'}); }
@@ -440,7 +435,7 @@ body.simple .tbl .hd{font-size:13px}
         renderAll();
       })
       .subscribe();
-    setInterval(() => loadAll().then(renderAll).catch(()=>{}), 60000);   // safety net if a live event is missed
+    setInterval(() => loadAll().then(renderAll).catch(()=>{}), 60000);
   }
   function errMsg(e){ return (e && (e.message || e.error_description || e.code)) || String(e); }
 
@@ -448,8 +443,8 @@ body.simple .tbl .hd{font-size:13px}
     const row = {queue_id:QID, target_id:c.tid, rank:c.rank, display:c.display, status, note};
     if (status==='metadata') row.meta = meta;
     const {error} = await sb.from('decisions').upsert(row, {onConflict:'queue_id,target_id'});
-    if (error && /'meta' column/.test(error.message||'')) { setStatus('Status 2 needs the database migration supabase/migrations/002-metadata-change.sql to be run once.', true); return false; }
-    if (error) { setStatus('Could not save: '+errMsg(error), true); return false; }
+    if (error && /'meta' column/.test(error.message||'')) { setStatus(t('needsMigration'), true); return false; }
+    if (error) { setStatus(t('couldNotSave')+errMsg(error), true); return false; }
     const b = blockOf(byTid.get(c.tid));
     if (!claims.get(b)) await sb.from('block_claims').upsert({queue_id:QID, block_no:b}, {onConflict:'queue_id,block_no'});
     return true;
@@ -457,7 +452,7 @@ body.simple .tbl .hd{font-size:13px}
   function openMetaForm(){
     const c=C[cur]; const d=decisionOf(c);
     $('metaDisplay').value = d&&d.meta ? d.meta.display : c.display;
-    $('metaPos').innerHTML = POS_VALUES.map(v=>`<option value="${v}">${esc(POS[v]||v)} (${v})</option>`).join('');
+    $('metaPos').innerHTML = POS_VALUES.map(v=>`<option value="${v}">${esc(posName(v))} (${v})</option>`).join('');
     $('metaPos').value = (d&&d.meta ? d.meta.part_of_speech : (POS_VALUES.includes(c.pos)?c.pos:'noun'));
     document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', b.dataset.s==='metadata'));
     $('metaErr').textContent=''; $('metaForm').hidden=false; $('metaDisplay').focus();
@@ -465,39 +460,43 @@ body.simple .tbl .hd{font-size:13px}
   async function decide(s, meta){
     const c=C[cur]; const prev=decisionOf(c);
     if (s==='metadata' && !meta) { openMetaForm(); return; }
-    const note = $('note').value.trim() || STATUS[s].defaultNote;
-    if (s==='rejected' && !note){ pendingReject = true; $('ask').hidden=false; $('ask').textContent='Why reject "'+c.display+'"? Pick one:'; renderReasons('rejected'); document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', b.dataset.s==='rejected')); if(!simple) $('note').focus(); return; }
+    const note = $('note').value.trim() || DEFAULT_NOTE[s];
+    if (s==='rejected' && !note){ pendingReject = true; $('ask').hidden=false; $('ask').textContent=t('askWhy',{word:c.display}); renderReasons('rejected'); document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', b.dataset.s==='rejected')); if(!simple) $('note').focus(); return; }
     pendingReject = false; $('ask').hidden=true;
     if (prev && prev.handle!==me.handle && !(await confirmOverride(prev))) return;
-    if (await writeDecision(c, s, note, meta)) { last = {i:cur, prev: prev ? Object.assign({}, prev) : null}; $('undoBtn').hidden=false; $('undoBtn').textContent = `↶ Undo: ${c.display} was marked ${STATUS[s].label}`; decisions.set(c.tid, Object.assign({}, prev||{}, {target_id:c.tid, status:s, note, meta:meta||null, handle:me.handle, decided_at:new Date().toISOString()})); setStatus(`${STATUS[s].label} · ${c.display}`); renderAll(); const nx=await nextForMe(cur+1); if(nx>=0) goTo(nx,false); else setStatus(simple ? 'All words in your range are done. Press Enter for the next range.' : 'Every word in this queue has a decision.'); }
+    if (await writeDecision(c, s, note, meta)) {
+      last = {i:cur, prev: prev ? Object.assign({}, prev) : null}; $('undoBtn').hidden=false; $('undoBtn').textContent = t('undo',{word:c.display, label:label(s)});
+      decisions.set(c.tid, Object.assign({}, prev||{}, {target_id:c.tid, status:s, note, meta:meta||null, handle:me.handle, decided_at:new Date().toISOString()}));
+      setStatus(`${label(s)} · ${c.display}`); renderAll();
+      const nx=await nextForMe(cur+1); if(nx>=0) goTo(nx,false); else setStatus(simple ? t('rangeDone') : t('allDone'));
+    }
   }
   async function saveNoteOnly(){
-    const c=C[cur]; const d=decisionOf(c); if(!d){ setStatus('Pick a status first; the note is saved with it.', true); return; }
+    const c=C[cur]; const d=decisionOf(c); if(!d){ setStatus(t('pickStatusFirst'), true); return; }
     if (d.handle!==me.handle && !(await confirmOverride(d))) return;
-    if (await writeDecision(c, d.status, $('note').value.trim(), d.meta)) { d.note=$('note').value.trim(); d.handle=me.handle; setStatus('Note saved.'); renderAll(); }
+    if (await writeDecision(c, d.status, $('note').value.trim(), d.meta)) { d.note=$('note').value.trim(); d.handle=me.handle; setStatus(t('noteSaved')); renderAll(); }
   }
   async function clearDecision(){
     const c=C[cur]; const d=decisionOf(c); if(!d) return;
     if (d.handle!==me.handle && !(await confirmOverride(d))) return;
     const {error} = await sb.from('decisions').delete().match({queue_id:QID, target_id:c.tid});
-    if (error) { setStatus('Could not clear: '+errMsg(error), true); return; }
-    decisions.delete(c.tid); setStatus('Decision cleared.'); renderAll();
+    if (error) { setStatus(t('couldNotClear')+errMsg(error), true); return; }
+    decisions.delete(c.tid); setStatus(t('cleared')); renderAll();
   }
   function confirmOverride(prev){
     return new Promise(res=>{
-      $('overrideText').textContent = `${prev.handle} marked this "${STATUS[prev.status].label}" on ${String(prev.decided_at).slice(0,10)}. Their decision stays in the history table.`;
+      $('overrideText').textContent = t('overrideText',{who:prev.handle, label:label(prev.status), date:String(prev.decided_at).slice(0,10)});
       const dlg=$('overrideDialog'); dlg.showModal();
       const done=v=>{ dlg.close(); $('overrideYes').onclick=$('overrideNo').onclick=null; res(v); };
       $('overrideYes').onclick=()=>done(true); $('overrideNo').onclick=()=>done(false); dlg.oncancel=()=>done(false);
     });
   }
   async function toggleClaim(){
-    const b=blockOf(cur); const cl=claims.get(b);
-    let error;
+    const b=blockOf(cur); const cl=claims.get(b); let error;
     if (!cl) ({error} = await sb.from('block_claims').upsert({queue_id:QID, block_no:b}, {onConflict:'queue_id,block_no'}));
     else if (cl.handle===me.handle) ({error} = await sb.from('block_claims').delete().match({queue_id:QID, block_no:b}));
-    else { setStatus(`Block is claimed by ${cl.handle}. Ask them, or pick another block.`, true); return; }
-    if (error) setStatus('Could not update claim: '+errMsg(error), true);
+    else { setStatus(t('blockTaken',{who:cl.handle}), true); return; }
+    if (error) setStatus(t('claimFailed')+errMsg(error), true);
     else { if (!cl) claims.set(b,{block_no:b,handle:me.handle}); else claims.delete(b); renderAll(); }
   }
 
@@ -505,13 +504,13 @@ body.simple .tbl .hd{font-size:13px}
   function exportJson(){
     const recs=[];
     for (const c of C){ const d=decisionOf(c); if(!d) continue;
-      const rec={schema_version:'review-decision-v1', target_type:'entry', target_id:c.tid, source_id:Q.source_id, review_status:STATUS[d.status].repo, reviewer_id:d.handle, review_date:String(d.decided_at).slice(0,10), review_notes:d.note||STATUS[d.status].defaultNote||STATUS[d.status].label, evidence:[]};
+      const rec={schema_version:'review-decision-v1', target_type:'entry', target_id:c.tid, source_id:Q.source_id, review_status:REPO[d.status], reviewer_id:d.handle, review_date:String(d.decided_at).slice(0,10), review_notes:d.note||DEFAULT_NOTE[d.status]||REPO[d.status], evidence:[]};
       if (d.status==='metadata' && d.meta) rec.replacement_metadata = {display:d.meta.display, normalized:d.meta.normalized, flags:d.meta.flags||'', morphology:d.meta.morphology||[], part_of_speech:d.meta.part_of_speech};
       recs.push(rec); }
-    if (!recs.length){ setStatus('Nothing to export yet.', true); return; }
+    if (!recs.length){ setStatus(t('nothingToExport'), true); return; }
     const text=JSON.stringify({schema_version:'review-desk-export-v1', queue_id:QID, source_id:Q.source_id, source_revision:Q.source_revision, exported_at:new Date().toISOString(), decisions:recs}, null, 1);
     const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'application/json'})); a.download=`${QID}-decisions-${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove();
-    setStatus(`Exported ${recs.length} decisions.`);
+    setStatus(t('exported',{n:recs.length}));
   }
 
   // ---------- events ----------
@@ -521,26 +520,27 @@ body.simple .tbl .hd{font-size:13px}
     inp.value = inp.value ? inp.value+'; '+r.dataset.r : r.dataset.r; if (decisionOf(C[cur])) saveNoteOnly(); else inp.focus(); });
   $('metaForm').onsubmit = e => { e.preventDefault(); const c=C[cur];
     const display=$('metaDisplay').value.trim(); const pos=$('metaPos').value; const normalized=normalizeText(display);
-    if (!display) { $('metaErr').textContent='Spelling cannot be empty.'; return; }
-    if (!/^[\p{L}'’ -]{1,64}$/u.test(normalized)) { $('metaErr').textContent='Only letters, apostrophes, hyphens and spaces are allowed.'; return; }
-    if (display===c.display && pos===c.pos) { $('metaErr').textContent='Nothing changed. Use approved instead, or correct the spelling or part of speech.'; return; }
+    if (!display) { $('metaErr').textContent=t('metaEmpty'); return; }
+    if (!/^[\p{L}'’ -]{1,64}$/u.test(normalized)) { $('metaErr').textContent=t('metaChars'); return; }
+    if (display===c.display && pos===c.pos) { $('metaErr').textContent=t('metaSame'); return; }
     const morphology = pos===c.pos ? (c.morph ? c.morph.split(';') : []) : ['po:'+pos];
     decide('metadata', {display, normalized, flags:c.flags||'', morphology, part_of_speech:pos}); };
   $('metaCancel').onclick = () => { $('metaForm').hidden=true; renderFocus(); };
   $('undoBtn').onclick = async () => {
     if (!last) return; const c=C[last.i]; let ok;
     if (last.prev) { ok = await writeDecision(c, last.prev.status, last.prev.note||'', last.prev.meta||null); if (ok) decisions.set(c.tid, last.prev); }
-    else { const {error} = await sb.from('decisions').delete().match({queue_id:QID, target_id:c.tid}); ok = !error; if (ok) decisions.delete(c.tid); else setStatus('Could not undo: '+errMsg(error), true); }
-    if (ok) { last=null; $('undoBtn').hidden=true; goTo(last===null?C.indexOf(c):cur,false); setStatus(`Undone · ${c.display} is ${decisionOf(c)?STATUS[decisionOf(c).status].label:'undecided'} again.`); renderAll(); }
+    else { const {error} = await sb.from('decisions').delete().match({queue_id:QID, target_id:c.tid}); ok = !error; if (ok) decisions.delete(c.tid); else setStatus(t('couldNotUndo')+errMsg(error), true); }
+    if (ok) { const i=last.i; last=null; $('undoBtn').hidden=true; goTo(i,false); const d=decisionOf(c); setStatus(t('undone',{word:c.display, state:d?label(d.status):t('undecided').toLowerCase()})); renderAll(); }
   };
   $('detailsBtn').onclick = () => { simple = !simple; applyMode(); renderAll(); };
+  $('langBtn').onclick = () => { lang = lang==='ku' ? 'en' : 'ku'; applyLang(); if (!$('app').hidden) renderAll(); };
   $('saveNote').onclick=saveNoteOnly; $('clearDecision').onclick=clearDecision;
   $('prev').onclick=()=>goTo(cur-1); $('next').onclick=()=>goTo(cur+1);
-  $('nextOpen').onclick=async()=>{ const i=await nextForMe(cur+1); if(i>=0) goTo(i); else setStatus('Every word in this queue has a decision.'); };
+  $('nextOpen').onclick=async()=>{ const i=await nextForMe(cur+1); if(i>=0) goTo(i); else setStatus(t('allDone')); };
   $('claimBtn').onclick=toggleClaim; $('exportBtn').onclick=exportJson;
   $('blocks').addEventListener('click', e=>{ const b=e.target.closest('.blk'); if(b) goTo(parseInt(b.dataset.b,10)*BLOCK); });
   $('rows').addEventListener('click', e=>{ const r=e.target.closest('tr.row'); if(r) goTo(parseInt(r.dataset.i,10)); });
-  $('nextOpenBlock').onclick=()=>{ for(let b=0;b<NB;b++){ const range=C.slice(b*BLOCK,(b+1)*BLOCK); if(!claims.get(b) && counts(range).pending>0){ goTo(b*BLOCK); return; } } setStatus('No unclaimed block with open words.'); };
+  $('nextOpenBlock').onclick=()=>{ for(let b=0;b<NB;b++){ if(!claims.get(b) && pendingIn(b)>0){ goTo(b*BLOCK); return; } } setStatus(t('noOpenBlock')); };
   document.addEventListener('keydown', e=>{
     if ($('app').hidden) return;
     if (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT'||document.querySelector('dialog[open]')) { if(e.key==='Escape') e.target.blur(); return; }
@@ -558,17 +558,17 @@ body.simple .tbl .hd{font-size:13px}
   $('loginForm').onsubmit = async e => { e.preventDefault(); $('loginErr').textContent='';
     const {error} = await sb.auth.signInWithPassword({email:$('loginEmail').value.trim(), password:$('loginPassword').value});
     if (error) $('loginErr').textContent = errMsg(error); };
-  $('forgotBtn').onclick = async () => { const email=$('loginEmail').value.trim(); if(!email){ $('loginErr').textContent='Type your email first.'; return; }
+  $('forgotBtn').onclick = async () => { const email=$('loginEmail').value.trim(); if(!email){ $('loginErr').textContent=t('typeEmailFirst'); return; }
     const {error} = await sb.auth.resetPasswordForEmail(email, {redirectTo: location.href.split('#')[0]});
-    $('loginErr').textContent = error ? errMsg(error) : 'If that address is invited, a reset link is on its way.'; };
+    $('loginErr').textContent = error ? errMsg(error) : t('resetSent'); };
   $('onboardForm').onsubmit = async e => { e.preventDefault(); $('onboardErr').textContent='';
     const handle=$('handleInput').value.trim().toLowerCase();
-    if (!/^[a-z0-9][a-z0-9-]{1,39}$/.test(handle)) { $('onboardErr').textContent='Handle: lowercase letters, digits, hyphens, 2–40 characters.'; return; }
+    if (!/^[a-z0-9][a-z0-9-]{1,39}$/.test(handle)) { $('onboardErr').textContent=t('handleInvalid'); return; }
     const pw=$('pwInput').value;
-    if (!$('pwFields').hidden && pw.length<8) { $('onboardErr').textContent='Password needs at least 8 characters.'; return; }
+    if (!$('pwFields').hidden && pw.length<8) { $('onboardErr').textContent=t('passwordShort'); return; }
     if (!$('pwFields').hidden) { const {error} = await sb.auth.updateUser({password:pw}); if (error) { $('onboardErr').textContent=errMsg(error); return; } }
     const {error} = await sb.from('reviewers').insert({user_id:session.user.id, handle});
-    if (error) { $('onboardErr').textContent = /duplicate|unique/i.test(errMsg(error)) ? 'That handle is taken. Choose another.' : errMsg(error); return; }
+    if (error) { $('onboardErr').textContent = /duplicate|unique/i.test(errMsg(error)) ? t('handleTaken') : errMsg(error); return; }
     me={id:session.user.id, handle}; await enterApp(); };
   $('resetForm').onsubmit = async e => { e.preventDefault(); const {error} = await sb.auth.updateUser({password:$('resetPw').value});
     if (error) { $('resetErr').textContent=errMsg(error); return; } await afterSignIn(); };
@@ -583,12 +583,13 @@ body.simple .tbl .hd{font-size:13px}
   async function enterApp(){
     $('reviewerName').textContent=me.handle; $('reviewerChip').hidden=false; $('exportBtn').hidden=false; $('signOut').hidden=false; $('mineChip').hidden=false; $('detailsBtn').hidden=false;
     applyMode(); show('app');
-    try { await loadAll(); } catch(e){ setStatus('Could not load decisions: '+errMsg(e), true); }
+    try { await loadAll(); } catch(e){ setStatus(t('loadFailed')+errMsg(e), true); }
     renderAll(); subscribeLive();
     if (simple) { const i = await nextForMe(cur); if (i>=0) goTo(i,false); }
   }
 
   // ---------- boot ----------
+  applyLang();
   $('queueName').textContent = Q.queue_label || QID;
   const cfg = window.REVIEW_DESK_CONFIG || {};
   if (!cfg.supabaseUrl || /YOUR-PROJECT/.test(cfg.supabaseUrl) || !window.supabase) { $('configMissing').hidden=false; show('loginCard'); return; }
@@ -603,5 +604,6 @@ body.simple .tbl .hd{font-size:13px}
   sb.auth.getSession().then(({data}) => { if (!data.session && !booted) show('loginCard'); });
 })();
 </script>
+
 </body>
 </html>
