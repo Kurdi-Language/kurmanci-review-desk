@@ -248,6 +248,7 @@ body.simple .word{font-size:48px}
       <div class="ask" id="ask" hidden></div>
       <div class="reasons" id="reasons"></div>
       <div class="status-line" id="statusLine"></div>
+      <button class="btn" id="undoBtn" type="button" hidden style="margin-top:6px">↶ Undo last decision</button>
       <div class="navrow">
         <button class="btn" id="prev">← Prev</button>
         <button class="btn" id="next">Next →</button>
@@ -335,6 +336,7 @@ body.simple .word{font-size:48px}
   let simple = true;
   try { simple = localStorage.getItem('krd.simple') !== 'off'; } catch(e){}
   let pendingReject = false;
+  let last = null;   // {i, prev} for undo
   function applyMode(){ document.body.classList.toggle('simple', simple); $('detailsBtn').textContent = simple ? 'Show details' : 'Simple view'; try{localStorage.setItem('krd.simple', simple?'on':'off');}catch(e){} }
   function myBlocks(){ const out=[]; for (const [b,cl] of claims) if (me && cl.handle===me.handle) out.push(b); return out.sort((a,b)=>a-b); }
   function pendingIn(b){ return counts(C.slice(b*BLOCK,(b+1)*BLOCK)).pending; }
@@ -463,7 +465,7 @@ body.simple .word{font-size:48px}
     if (s==='rejected' && !note){ pendingReject = true; $('ask').hidden=false; $('ask').textContent='Why reject "'+c.display+'"? Pick one:'; renderReasons('rejected'); document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', b.dataset.s==='rejected')); if(!simple) $('note').focus(); return; }
     pendingReject = false; $('ask').hidden=true;
     if (prev && prev.handle!==me.handle && !(await confirmOverride(prev))) return;
-    if (await writeDecision(c, s, note, meta)) { decisions.set(c.tid, Object.assign({}, prev||{}, {target_id:c.tid, status:s, note, meta:meta||null, handle:me.handle, decided_at:new Date().toISOString()})); setStatus(`${STATUS[s].label} · ${c.display}`); renderAll(); const nx=await nextForMe(cur+1); if(nx>=0) goTo(nx,false); else setStatus(simple ? 'All words in your range are done. Press Enter for the next range.' : 'Every word in this queue has a decision.'); }
+    if (await writeDecision(c, s, note, meta)) { last = {i:cur, prev: prev ? Object.assign({}, prev) : null}; $('undoBtn').hidden=false; $('undoBtn').textContent = `↶ Undo: ${c.display} was marked ${STATUS[s].label}`; decisions.set(c.tid, Object.assign({}, prev||{}, {target_id:c.tid, status:s, note, meta:meta||null, handle:me.handle, decided_at:new Date().toISOString()})); setStatus(`${STATUS[s].label} · ${c.display}`); renderAll(); const nx=await nextForMe(cur+1); if(nx>=0) goTo(nx,false); else setStatus(simple ? 'All words in your range are done. Press Enter for the next range.' : 'Every word in this queue has a decision.'); }
   }
   async function saveNoteOnly(){
     const c=C[cur]; const d=decisionOf(c); if(!d){ setStatus('Pick a status first; the note is saved with it.', true); return; }
@@ -521,6 +523,12 @@ body.simple .word{font-size:48px}
     const morphology = pos===c.pos ? (c.morph ? c.morph.split(';') : []) : ['po:'+pos];
     decide('metadata', {display, normalized, flags:c.flags||'', morphology, part_of_speech:pos}); };
   $('metaCancel').onclick = () => { $('metaForm').hidden=true; renderFocus(); };
+  $('undoBtn').onclick = async () => {
+    if (!last) return; const c=C[last.i]; let ok;
+    if (last.prev) { ok = await writeDecision(c, last.prev.status, last.prev.note||'', last.prev.meta||null); if (ok) decisions.set(c.tid, last.prev); }
+    else { const {error} = await sb.from('decisions').delete().match({queue_id:QID, target_id:c.tid}); ok = !error; if (ok) decisions.delete(c.tid); else setStatus('Could not undo: '+errMsg(error), true); }
+    if (ok) { last=null; $('undoBtn').hidden=true; goTo(last===null?C.indexOf(c):cur,false); setStatus(`Undone · ${c.display} is ${decisionOf(c)?STATUS[decisionOf(c).status].label:'undecided'} again.`); renderAll(); }
+  };
   $('detailsBtn').onclick = () => { simple = !simple; applyMode(); renderAll(); };
   $('saveNote').onclick=saveNoteOnly; $('clearDecision').onclick=clearDecision;
   $('prev').onclick=()=>goTo(cur-1); $('next').onclick=()=>goTo(cur+1);
