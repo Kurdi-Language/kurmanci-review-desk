@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kurmancî Review Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F2F4F1; --surface:#FFFFFF; --ink:#172019; --muted:#5F6B64; --line:#D5DBD6; --line-strong:#B9C2BC;
+  --accent:#0E6B4F; --accent-ink:#FFFFFF; --accent-soft:#DCEFE6; --sun:#D9A21B; --sun-soft:#FBF1D6;
+  --ok:#1F7A4D; --ok-soft:#DFF2E7; --bad:#B5382C; --bad-soft:#F8E1DD; --exp:#B9791A; --exp-soft:#FBEBD0;
+  --lin:#5B4BB5; --lin-soft:#E6E1F7; --src:#4F6D8A; --src-soft:#DFE8F0; --focus:#0E6B4F;
+  --shadow:0 1px 2px rgba(23,32,25,.06), 0 8px 24px rgba(23,32,25,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#101613; --surface:#182019; --ink:#E6EBE7; --muted:#9AA7A0; --line:#2A352E; --line-strong:#3C4A41;
+    --accent:#5CC59A; --accent-ink:#0B1A13; --accent-soft:#1C3A2E; --sun:#E4B23A; --sun-soft:#3A2F12;
+    --ok:#5CC59A; --ok-soft:#1B3527; --bad:#E5796C; --bad-soft:#3D1F1B; --exp:#E0A64A; --exp-soft:#3A2B12;
+    --lin:#A99AEE; --lin-soft:#2A2545; --src:#8FB0CC; --src-soft:#1F2C38; --focus:#5CC59A;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{color-scheme:light dark}
+body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;padding-block:0 32px;padding-inline:16px}
+button{font:inherit;color:inherit}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.num{font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+[hidden]{display:none!important}
+
+.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:14px 10px;border-bottom:1px solid var(--line);margin-inline:-16px;padding-inline:16px;background:var(--surface);position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+.brand h1{font:500 19px/1.2 "IBM Plex Serif",Georgia,serif;margin:0;letter-spacing:-.01em}
+.brand .letters{font-family:"IBM Plex Serif",Georgia,serif;font-style:italic;color:var(--accent);font-size:15px;letter-spacing:.14em}
+.eyebrow{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);border-radius:999px;padding:4px 10px;font-size:13px;background:var(--surface)}
+.chip b{font-weight:600}
+.btn{border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:13.5px;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.quiet{border-color:transparent;background:transparent;color:var(--muted)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input[type=text],input[type=email],input[type=password]{width:100%;border:1px solid var(--line-strong);border-radius:8px;padding:9px 10px;font:inherit;background:var(--surface);color:var(--ink)}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+
+.wrap{display:grid;grid-template-columns:280px minmax(0,1fr);gap:20px;margin-top:18px;align-items:start}
+@media (max-width:860px){.wrap{grid-template-columns:1fr}}
+.rail{position:sticky;top:64px;display:flex;flex-direction:column;gap:14px;max-height:calc(100vh - 80px);overflow:auto;padding-right:4px}
+@media (max-width:860px){.rail{position:static;max-height:none}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.panel .hd{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.panel .bd{padding:12px 14px}
+
+.progress{display:flex;flex-direction:column;gap:8px}
+.bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--line)}
+.bar span{display:block;height:100%}
+.legend{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:13px}
+.legend .k{display:flex;align-items:center;gap:8px;color:var(--muted)}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.d-approved{background:var(--ok)}.d-rejected{background:var(--bad)}.d-experimental{background:var(--exp)}.d-linguist{background:var(--lin)}.d-source{background:var(--src)}.d-pending{background:var(--line-strong)}
+
+.blocks{display:flex;flex-direction:column;max-height:46vh;overflow:auto}
+@media (max-width:860px){.blocks{max-height:32vh}}
+.blk{display:grid;grid-template-columns:44px 1fr auto;gap:8px;align-items:center;padding:7px 14px;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;cursor:pointer;width:100%}
+.blk:first-child{border-top:0}
+.blk:hover{background:var(--accent-soft)}
+.blk.active{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+.blk .n{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--muted)}
+.blk .range{font-size:13px}
+.blk .mini{height:5px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:4px;display:flex}
+.blk .mini span{display:block;height:100%;background:var(--ok)}
+.blk .who{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.blk .who.me{color:var(--sun)}
+
+.focus{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:18px 22px 20px}
+.focus .meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+.focus .meta .rank{font-family:"IBM Plex Mono",monospace}
+.word{font:500 44px/1.15 "IBM Plex Serif",Georgia,serif;margin:10px 0 2px;letter-spacing:-.01em;overflow-wrap:anywhere}
+.word small{font:italic 400 18px/1 "IBM Plex Serif",Georgia,serif;color:var(--muted);margin-left:10px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px 18px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.fact .l{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.fact .v{font-size:15px;margin-top:2px}
+.flag{display:inline-block;border-radius:6px;padding:1px 7px;font-size:12px;background:var(--sun-soft);color:var(--ink);border:1px solid var(--sun);margin-right:4px}
+.note-hint{font-size:13px;color:var(--muted);margin-top:10px}
+
+.decide{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:16px}
+@media (max-width:700px){.decide{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dbtn{display:flex;flex-direction:column;align-items:flex-start;gap:3px;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;cursor:pointer;text-align:left;min-height:64px}
+.dbtn .key{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);border:1px solid var(--line-strong);border-radius:4px;padding:0 5px;line-height:16px}
+.dbtn .t{font-weight:600;font-size:14px}
+.dbtn .s{font-size:12px;color:var(--muted);line-height:1.3}
+.dbtn:hover{border-color:var(--line-strong);background:var(--ground)}
+.dbtn[data-s="approved"].on{border-color:var(--ok);background:var(--ok-soft)}
+.dbtn[data-s="rejected"].on{border-color:var(--bad);background:var(--bad-soft)}
+.dbtn[data-s="experimental"].on{border-color:var(--exp);background:var(--exp-soft)}
+.dbtn[data-s="linguist"].on{border-color:var(--lin);background:var(--lin-soft)}
+.dbtn[data-s="source"].on{border-color:var(--src);background:var(--src-soft)}
+.noterow{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.noterow input{flex:1 1 260px;min-width:0;width:auto}
+.reasons{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.reason{border:1px solid var(--line);background:var(--ground);border-radius:999px;padding:3px 10px;font-size:12.5px;cursor:pointer}
+.reason:hover{border-color:var(--accent)}
+.navrow{display:flex;gap:8px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.navrow .spacer{flex:1}
+.status-line{font-size:13px;color:var(--muted);min-height:20px;margin-top:8px}
+.status-line.warn{color:var(--bad)}
+
+.tbl{margin-top:18px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.row{cursor:pointer}
+tr.row:hover td{background:var(--ground)}
+tr.row.cur td{background:var(--accent-soft)}
+td.w{font-family:"IBM Plex Serif",Georgia,serif;font-size:16px}
+.pill{display:inline-block;border-radius:999px;padding:1px 8px;font-size:12px;font-weight:500;white-space:nowrap}
+.p-approved{background:var(--ok-soft);color:var(--ok)}.p-rejected{background:var(--bad-soft);color:var(--bad)}.p-experimental{background:var(--exp-soft);color:var(--exp)}.p-linguist{background:var(--lin-soft);color:var(--lin)}.p-source{background:var(--src-soft);color:var(--src)}.p-pending{background:var(--ground);color:var(--muted);border:1px solid var(--line)}
+td.by{color:var(--muted);font-size:12.5px;white-space:nowrap}
+.tblwrap{overflow-x:auto}
+
+details.guide{margin-top:14px}
+details.guide summary{cursor:pointer;color:var(--muted);font-size:13.5px}
+.guide .bd{font-size:13.5px}
+.guide dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 12px;margin:8px 0 0}
+.guide dt{font-weight:600}
+.guide dd{margin:0;color:var(--muted)}
+
+.gate{max-width:440px;margin:48px auto 0;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:22px 24px}
+.gate h2{font:500 22px/1.2 "IBM Plex Serif",Georgia,serif;margin:0 0 6px}
+.gate p{margin:6px 0;color:var(--muted);font-size:14px}
+.gate .row{display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:16px;flex-wrap:wrap}
+.gate .err{color:var(--bad);font-size:13.5px;min-height:18px;margin-top:8px}
+.banner{margin-top:14px;border:1px solid var(--sun);background:var(--sun-soft);border-radius:10px;padding:10px 14px;font-size:13.5px}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);box-shadow:var(--shadow);padding:20px 22px;max-width:420px;width:calc(100% - 32px)}
+dialog::backdrop{background:rgba(0,0,0,.35)}
+dialog h2{font:500 20px/1.2 "IBM Plex Serif",Georgia,serif;margin:0 0 6px}
+dialog p{margin:6px 0;color:var(--muted);font-size:14px}
+dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+@media (prefers-reduced-motion:no-preference){.dbtn,.blk,.btn{transition:background .12s,border-color .12s}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><h1>Kurmancî Review Desk</h1><span class="letters">ç ê î ş û</span></div>
+  <span class="chip"><span class="eyebrow">Queue</span> <b id="queueName">—</b></span>
+  <span class="chip" id="reviewerChip" hidden><span class="eyebrow">Reviewer</span> <b id="reviewerName">—</b></span>
+  <button class="btn" id="exportBtn" hidden>Export decisions</button>
+  <button class="btn quiet" id="signOut" hidden>Sign out</button>
+</header>
+
+<div id="configMissing" class="banner" hidden>This copy of the site has no database configured yet. Edit <span class="mono">config.js</span> with your Supabase project URL and anon key.</div>
+
+<!-- sign in -->
+<section class="gate" id="loginCard" hidden>
+  <h2>Sign in</h2>
+  <p>Access is by invitation. Use the email address that received your invitation.</p>
+  <form id="loginForm">
+    <label for="loginEmail">Email</label><input type="email" id="loginEmail" autocomplete="username" required>
+    <label for="loginPassword">Password</label><input type="password" id="loginPassword" autocomplete="current-password" required>
+    <div class="err" id="loginErr"></div>
+    <div class="row"><button class="btn quiet" type="button" id="forgotBtn">Forgot password</button><button class="btn primary" type="submit">Sign in</button></div>
+  </form>
+</section>
+
+<!-- first visit: handle (+ password when arriving from an invitation or reset link) -->
+<section class="gate" id="onboardCard" hidden>
+  <h2>Welcome</h2>
+  <p>Choose the reviewer handle the project will record on every decision you make. Lowercase letters, digits, and hyphens; it cannot be changed later.</p>
+  <form id="onboardForm">
+    <label for="handleInput">Reviewer handle</label><input type="text" id="handleInput" placeholder="e.g. ferhatguneri" autocomplete="off" spellcheck="false" required>
+    <div id="pwFields">
+      <label for="pwInput">Set a password (8+ characters)</label><input type="password" id="pwInput" autocomplete="new-password" minlength="8">
+    </div>
+    <div class="err" id="onboardErr"></div>
+    <div class="row"><span></span><button class="btn primary" type="submit">Start reviewing</button></div>
+  </form>
+</section>
+
+<!-- password reset landing -->
+<section class="gate" id="resetCard" hidden>
+  <h2>New password</h2>
+  <form id="resetForm">
+    <label for="resetPw">Password (8+ characters)</label><input type="password" id="resetPw" autocomplete="new-password" minlength="8" required>
+    <div class="err" id="resetErr"></div>
+    <div class="row"><span></span><button class="btn primary" type="submit">Save password</button></div>
+  </form>
+</section>
+
+<div class="wrap" id="app" hidden>
+  <aside class="rail">
+    <section class="panel">
+      <div class="hd"><span class="eyebrow">Progress</span><span class="num" id="progressText">0 / 0</span></div>
+      <div class="bd progress"><div class="bar" id="progressBar"></div><div class="legend" id="legend"></div></div>
+    </section>
+    <section class="panel">
+      <div class="hd"><span class="eyebrow">Blocks of 50</span><button class="btn quiet" id="nextOpenBlock" style="padding:0 6px;font-size:12.5px">next unclaimed</button></div>
+      <div class="blocks" id="blocks"></div>
+    </section>
+  </aside>
+
+  <main>
+    <section class="focus" id="focus" aria-live="polite">
+      <div class="meta"><span class="rank">rank <b id="rank">—</b> of <span id="total">—</span></span><span id="decidedBy"></span></div>
+      <div class="word" id="word">—</div>
+      <div class="facts" id="facts"></div>
+      <div class="note-hint">Approve means the word <em>and</em> the imported part of speech shown above are both right. If the word is fine but the metadata is wrong, choose Needs linguist and say what is wrong.</div>
+      <div class="decide" id="decide">
+        <button class="dbtn" data-s="approved"><span class="key">1</span><span class="t">Approve</span><span class="s">Valid Kurmancî word, metadata correct</span></button>
+        <button class="dbtn" data-s="rejected"><span class="key">2</span><span class="t">Reject</span><span class="s">Keep out of the default pack (reason required)</span></button>
+        <button class="dbtn" data-s="experimental"><span class="key">3</span><span class="t">Experimental</span><span class="s">Usable, but not for the default pack</span></button>
+        <button class="dbtn" data-s="linguist"><span class="key">4</span><span class="t">Needs linguist</span><span class="s">Valid but uncertain, or metadata wrong</span></button>
+        <button class="dbtn" data-s="source"><span class="key">5</span><span class="t">Needs source</span><span class="s">Provenance or attestation unclear</span></button>
+      </div>
+      <div class="noterow">
+        <input type="text" id="note" placeholder="Note (required for Reject; optional otherwise). Press N to focus." autocomplete="off">
+        <button class="btn" id="saveNote">Save note</button>
+        <button class="btn quiet" id="clearDecision" title="Remove decision (Backspace)">Clear</button>
+      </div>
+      <div class="reasons" id="reasons"></div>
+      <div class="status-line" id="statusLine"></div>
+      <div class="navrow">
+        <button class="btn" id="prev">← Prev</button>
+        <button class="btn" id="next">Next →</button>
+        <button class="btn primary" id="nextOpen">Next undecided ↵</button>
+        <span class="spacer"></span>
+        <button class="btn" id="claimBtn">Claim this block</button>
+      </div>
+      <details class="guide">
+        <summary>How to decide, keyboard keys, and what each status means</summary>
+        <div class="bd">
+          <p>You are the trust boundary. Nothing here is approved by software; every status you pick becomes a human decision recorded under your reviewer handle. Counts show how many Kurmancî Wikipedia articles contain the word. They tell you what to look at first, not whether the word is correct.</p>
+          <dl>
+            <dt>Approve</dt><dd>The spelling is standard Kurmancî and the imported part of speech is right. The word enters the reviewed pack used for spell check and suggestions.</dd>
+            <dt>Reject</dt><dd>Foreign word, foreign proper name, misspelling, fragment, or otherwise not default-keyboard vocabulary. Write why.</dd>
+            <dt>Experimental</dt><dd>Real usage but not something the default keyboard should suggest or accept silently.</dd>
+            <dt>Needs linguist</dt><dd>You believe the word may be valid but cannot vouch for the spelling, the standard form, or the part of speech.</dd>
+            <dt>Needs source</dt><dd>You cannot tell where this form comes from or whether it is attested outside this source.</dd>
+          </dl>
+          <p>Keys: <b>1–5</b> decide, <b>Backspace</b> clear, <b>←/→</b> move, <b>Enter</b> next undecided, <b>N</b> note. Claim an open block so two reviewers do not work the same words.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel tbl">
+      <div class="hd"><span class="eyebrow">Block <span id="blockLabel">—</span></span><span id="blockClaim" style="font-size:13px;color:var(--muted)"></span></div>
+      <div class="tblwrap"><table>
+        <thead><tr><th>#</th><th>Word</th><th>Part of speech</th><th class="num">Articles</th><th>Decision</th><th>By</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+    </section>
+  </main>
+</div>
+
+<dialog id="overrideDialog">
+  <h2>Change another reviewer's decision?</h2>
+  <p id="overrideText"></p>
+  <div class="row"><button class="btn" id="overrideNo">Keep theirs</button><button class="btn primary" id="overrideYes">Replace with mine</button></div>
+</dialog>
+
+<script>
+  // Capture the auth link type before the client consumes the URL hash.
+  window.__authLinkType = (new URLSearchParams((location.hash || '').replace(/^#/, ''))).get('type') || '';
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="queue-hunspell-kuwiki-001.js"></script>
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const RAW = window.REVIEW_QUEUE, Q = RAW.summary, QID = Q.queue_id, BLOCK = 50;
+  const C = RAW.candidates.map(a => ({rank:a[0], tid:a[1], display:a[2], normalized:a[3]||a[2].toLowerCase(), pos:a[4], morph:a[5], flags:a[6], line:a[7], docs:a[8], toks:a[9], audit:a[10]}));
+  const N = C.length, NB = Math.ceil(N / BLOCK);
+  const byTid = new Map(C.map((c,i)=>[c.tid,i]));
+  const STATUS = {
+    approved:     {label:'Approved',       repo:'approved',                   cls:'approved',     defaultNote:'Human-approved lexical entry; imported Hunspell metadata accepted as-is.'},
+    rejected:     {label:'Rejected',       repo:'rejected_from_default_pack', cls:'rejected',     defaultNote:''},
+    experimental: {label:'Experimental',   repo:'experimental_only',          cls:'experimental', defaultNote:'Human review: retain only in experimental vocabulary.'},
+    linguist:     {label:'Needs linguist', repo:'needs_linguist',             cls:'linguist',     defaultNote:'Needs linguist'},
+    source:       {label:'Needs source',   repo:'needs_source_investigation', cls:'source',       defaultNote:'Needs source investigation'},
+  };
+  const REASONS = {
+    rejected:['Foreign word','Foreign proper name','Foreign place name','Misspelling / non-standard form','Fragment, affix, or clitic only','Abbreviation or code','Inflected form, not a lemma'],
+    linguist:['Word valid, part of speech wrong','Dialectal; standard form unclear','Spelling uncertain','Unsure if it is a word'],
+    experimental:['Slang or colloquial','Rare or technical'],
+    source:['Cannot find outside this source','Looks like an import artifact'],
+    approved:[]
+  };
+  const POS = {noun_fem:'noun, feminine',noun_masc:'noun, masculine',noun_fem_masc:'noun, fem./masc.',noun:'noun',adjective:'adjective',adverb:'adverb',verb:'verb',propn:'proper noun',num:'numeral',numeral:'numeral',sconj:'conjunction',adp:'preposition / adposition',pronoun:'pronoun',intj:'interjection',adj_adv:'adjective / adverb',punctuation:'punctuation',unknown:'unknown'};
+  const fmt = n => Number(n).toLocaleString('en-US');
+  const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+  const blockOf = i => Math.floor(i / BLOCK);
+
+  // ---------- state ----------
+  let sb = null, session = null, me = null;         // me = {id, handle}
+  const decisions = new Map();                       // target_id -> row
+  const claims = new Map();                          // block_no -> row
+  let cur = 0;
+  try { const s = parseInt(localStorage.getItem('krd.cur.'+QID),10); if(!isNaN(s) && s>=0 && s<N) cur = s; } catch(e){}
+  const decisionOf = c => decisions.get(c.tid) || null;
+  function counts(range){ const k={approved:0,rejected:0,experimental:0,linguist:0,source:0,pending:0}; for(const c of range){const d=decisionOf(c); k[d?d.status:'pending']++;} return k; }
+  function show(id){ for (const s of ['loginCard','onboardCard','resetCard','app']) $(s).hidden = (s !== id); }
+  function setStatus(msg, warn){ const el=$('statusLine'); el.textContent=msg||''; el.classList.toggle('warn',!!warn); }
+
+  // ---------- render ----------
+  function renderProgress(){
+    const k = counts(C); const done = N - k.pending;
+    $('progressText').textContent = fmt(done)+' / '+fmt(N);
+    $('progressBar').innerHTML = ['approved','rejected','experimental','linguist','source','pending'].map(s=>`<span class="d-${s}" style="width:${(k[s]/N*100).toFixed(2)}%"></span>`).join('');
+    $('legend').innerHTML = ['approved','rejected','experimental','linguist','source','pending'].map(s=>`<span class="k"><i class="dot d-${s}"></i>${s==='pending'?'Undecided':STATUS[s].label}</span><span class="num">${fmt(k[s])}</span>`).join('');
+  }
+  function renderBlocks(){
+    const b0 = blockOf(cur); let html='';
+    for (let b=0;b<NB;b++){
+      const range=C.slice(b*BLOCK,(b+1)*BLOCK); const k=counts(range); const done=range.length-k.pending; const cl=claims.get(b);
+      html += `<button class="blk${b===b0?' active':''}" data-b="${b}"><span class="n num">${String(b+1).padStart(3,'0')}</span><span><span class="range num">${fmt(range[0].rank)}–${fmt(range[range.length-1].rank)}</span><span class="mini"><span style="width:${(done/range.length*100).toFixed(0)}%"></span></span></span><span class="who${cl&&me&&cl.handle===me.handle?' me':''}">${cl?esc(cl.handle):(done===range.length?'done':'open')}</span></button>`;
+    }
+    $('blocks').innerHTML = html;
+  }
+  function renderFocus(){
+    const c=C[cur]; const d=decisionOf(c);
+    $('rank').textContent=fmt(c.rank); $('total').textContent=fmt(N);
+    $('word').innerHTML = esc(c.display) + (c.normalized!==c.display?`<small>${esc(c.normalized)}</small>`:'');
+    $('decidedBy').innerHTML = d ? `<span class="pill p-${STATUS[d.status].cls}">${STATUS[d.status].label}</span> by <b>${esc(d.handle)}</b> · ${String(d.decided_at).slice(0,10)}` : '<span class="pill p-pending">Undecided</span>';
+    const facts=[
+      ['Part of speech (imported, unverified)', esc(POS[c.pos]||c.pos)],
+      ['Hunspell morphology', `<span class="mono">${esc(c.morph||'—')}</span>`],
+      ['Wikipedia articles containing it', `<span class="num">${fmt(c.docs)}</span> <span style="color:var(--muted)">· ${fmt(c.toks)} occurrences</span>`],
+      ['Hunspell source line', `<span class="mono">kmr-Latn.dic:${esc(c.line)}</span>${c.flags?` <span class="mono" style="color:var(--muted)">flags ${esc(c.flags)}</span>`:''}`],
+    ];
+    if (c.audit) facts.push(['Audit flags', c.audit.split(',').map(a=>`<span class="flag">${esc(a)}</span>`).join('')]);
+    if (/^[A-ZÇÊÎŞÛ]/.test(c.display)) facts.push(['Capitalized in source','Possibly a proper noun']);
+    $('facts').innerHTML = facts.map(([l,v])=>`<div class="fact"><div class="l">${l}</div><div class="v">${v}</div></div>`).join('');
+    document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', !!d && d.status===b.dataset.s));
+    $('note').value = d && d.note ? d.note : '';
+    renderReasons(d?d.status:null);
+    const cl = claims.get(blockOf(cur));
+    $('claimBtn').textContent = cl ? (me && cl.handle===me.handle ? 'Release this block' : `Claimed by ${cl.handle}`) : 'Claim this block';
+    try { localStorage.setItem('krd.cur.'+QID, String(cur)); } catch(e){}
+  }
+  function renderReasons(s){ $('reasons').innerHTML = (s?REASONS[s]:[]).map(r=>`<button class="reason" type="button" data-r="${esc(r)}">${esc(r)}</button>`).join(''); }
+  function renderTable(){
+    const b=blockOf(cur); const range=C.slice(b*BLOCK,(b+1)*BLOCK); const cl=claims.get(b);
+    $('blockLabel').textContent = String(b+1).padStart(3,'0')+' · ranks '+fmt(range[0].rank)+'–'+fmt(range[range.length-1].rank);
+    $('blockClaim').textContent = cl ? 'claimed by '+cl.handle : 'unclaimed';
+    $('rows').innerHTML = range.map(c=>{const d=decisionOf(c); const i=byTid.get(c.tid);
+      return `<tr class="row${i===cur?' cur':''}" data-i="${i}"><td class="num" style="color:var(--muted)">${fmt(c.rank)}</td><td class="w">${esc(c.display)}</td><td>${esc(POS[c.pos]||c.pos)}</td><td class="num">${fmt(c.docs)}</td><td>${d?`<span class="pill p-${STATUS[d.status].cls}">${STATUS[d.status].label}</span>`:'<span class="pill p-pending">—</span>'}</td><td class="by">${d?esc(d.handle):''}</td></tr>`;}).join('');
+  }
+  function renderAll(){ renderProgress(); renderBlocks(); renderFocus(); renderTable(); }
+  function goTo(i, scroll){ if(i<0||i>=N) return; const cb=blockOf(i)!==blockOf(cur); cur=i; renderFocus(); if(cb) renderBlocks(); renderTable(); if(scroll!==false) window.scrollTo({top:0,behavior:'smooth'}); }
+  function nextUndecided(from){ for(let i=from;i<N;i++) if(!decisionOf(C[i])) return i; for(let i=0;i<from;i++) if(!decisionOf(C[i])) return i; return -1; }
+
+  // ---------- data ----------
+  async function loadAll(){
+    decisions.clear(); claims.clear();
+    for (let from=0;;from+=1000){
+      const {data, error} = await sb.from('decisions').select('*').eq('queue_id', QID).order('rank').range(from, from+999);
+      if (error) throw error;
+      for (const r of data) decisions.set(r.target_id, r);
+      if (data.length < 1000) break;
+    }
+    const {data: cl, error: e2} = await sb.from('block_claims').select('*').eq('queue_id', QID);
+    if (e2) throw e2;
+    for (const r of cl) claims.set(r.block_no, r);
+  }
+  function subscribeLive(){
+    sb.channel('desk-'+QID)
+      .on('postgres_changes', {event:'*', schema:'public', table:'decisions', filter:'queue_id=eq.'+QID}, p => {
+        if (p.eventType==='DELETE') { if (p.old && p.old.target_id) decisions.delete(p.old.target_id); }
+        else if (p.new) decisions.set(p.new.target_id, p.new);
+        renderAll();
+      })
+      .on('postgres_changes', {event:'*', schema:'public', table:'block_claims', filter:'queue_id=eq.'+QID}, p => {
+        if (p.eventType==='DELETE') { if (p.old && p.old.block_no!=null) claims.delete(p.old.block_no); }
+        else if (p.new) claims.set(p.new.block_no, p.new);
+        renderAll();
+      })
+      .subscribe();
+    setInterval(() => loadAll().then(renderAll).catch(()=>{}), 60000);   // safety net if a live event is missed
+  }
+  function errMsg(e){ return (e && (e.message || e.error_description || e.code)) || String(e); }
+
+  async function writeDecision(c, status, note){
+    const {error} = await sb.from('decisions').upsert({queue_id:QID, target_id:c.tid, rank:c.rank, display:c.display, status, note}, {onConflict:'queue_id,target_id'});
+    if (error) { setStatus('Could not save: '+errMsg(error), true); return false; }
+    const b = blockOf(byTid.get(c.tid));
+    if (!claims.get(b)) await sb.from('block_claims').upsert({queue_id:QID, block_no:b}, {onConflict:'queue_id,block_no'});
+    return true;
+  }
+  async function decide(s){
+    const c=C[cur]; const prev=decisionOf(c);
+    const note = $('note').value.trim() || STATUS[s].defaultNote;
+    if (s==='rejected' && !note){ setStatus('Reject needs a reason. Pick one below or type a note, then press 2 again.', true); renderReasons('rejected'); $('note').focus(); return; }
+    if (prev && prev.handle!==me.handle && !(await confirmOverride(prev))) return;
+    if (await writeDecision(c, s, note)) { decisions.set(c.tid, Object.assign({}, prev||{}, {target_id:c.tid, status:s, note, handle:me.handle, decided_at:new Date().toISOString()})); setStatus(`${STATUS[s].label} · ${c.display}`); const nx=nextUndecided(cur+1); renderAll(); if(nx>=0) goTo(nx,false); }
+  }
+  async function saveNoteOnly(){
+    const c=C[cur]; const d=decisionOf(c); if(!d){ setStatus('Pick a status first; the note is saved with it.', true); return; }
+    if (d.handle!==me.handle && !(await confirmOverride(d))) return;
+    if (await writeDecision(c, d.status, $('note').value.trim())) { d.note=$('note').value.trim(); d.handle=me.handle; setStatus('Note saved.'); renderAll(); }
+  }
+  async function clearDecision(){
+    const c=C[cur]; const d=decisionOf(c); if(!d) return;
+    if (d.handle!==me.handle && !(await confirmOverride(d))) return;
+    const {error} = await sb.from('decisions').delete().match({queue_id:QID, target_id:c.tid});
+    if (error) { setStatus('Could not clear: '+errMsg(error), true); return; }
+    decisions.delete(c.tid); setStatus('Decision cleared.'); renderAll();
+  }
+  function confirmOverride(prev){
+    return new Promise(res=>{
+      $('overrideText').textContent = `${prev.handle} marked this "${STATUS[prev.status].label}" on ${String(prev.decided_at).slice(0,10)}. Their decision stays in the history table.`;
+      const dlg=$('overrideDialog'); dlg.showModal();
+      const done=v=>{ dlg.close(); $('overrideYes').onclick=$('overrideNo').onclick=null; res(v); };
+      $('overrideYes').onclick=()=>done(true); $('overrideNo').onclick=()=>done(false); dlg.oncancel=()=>done(false);
+    });
+  }
+  async function toggleClaim(){
+    const b=blockOf(cur); const cl=claims.get(b);
+    let error;
+    if (!cl) ({error} = await sb.from('block_claims').upsert({queue_id:QID, block_no:b}, {onConflict:'queue_id,block_no'}));
+    else if (cl.handle===me.handle) ({error} = await sb.from('block_claims').delete().match({queue_id:QID, block_no:b}));
+    else { setStatus(`Block is claimed by ${cl.handle}. Ask them, or pick another block.`, true); return; }
+    if (error) setStatus('Could not update claim: '+errMsg(error), true);
+    else { if (!cl) claims.set(b,{block_no:b,handle:me.handle}); else claims.delete(b); renderAll(); }
+  }
+
+  // ---------- export ----------
+  function exportJson(){
+    const recs=[];
+    for (const c of C){ const d=decisionOf(c); if(!d) continue;
+      recs.push({schema_version:'review-decision-v1', target_type:'entry', target_id:c.tid, source_id:Q.source_id, review_status:STATUS[d.status].repo, reviewer_id:d.handle, review_date:String(d.decided_at).slice(0,10), review_notes:d.note||STATUS[d.status].defaultNote||STATUS[d.status].label, evidence:[]}); }
+    if (!recs.length){ setStatus('Nothing to export yet.', true); return; }
+    const text=JSON.stringify({schema_version:'review-desk-export-v1', queue_id:QID, source_id:Q.source_id, source_revision:Q.source_revision, exported_at:new Date().toISOString(), decisions:recs}, null, 1);
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'application/json'})); a.download=`${QID}-decisions-${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove();
+    setStatus(`Exported ${recs.length} decisions.`);
+  }
+
+  // ---------- events ----------
+  document.querySelectorAll('.dbtn').forEach(b=>b.addEventListener('click',()=>decide(b.dataset.s)));
+  $('reasons').addEventListener('click', e=>{ const r=e.target.closest('.reason'); if(!r) return; const inp=$('note'); inp.value = inp.value ? inp.value+'; '+r.dataset.r : r.dataset.r; if (decisionOf(C[cur])) saveNoteOnly(); else inp.focus(); });
+  $('saveNote').onclick=saveNoteOnly; $('clearDecision').onclick=clearDecision;
+  $('prev').onclick=()=>goTo(cur-1); $('next').onclick=()=>goTo(cur+1);
+  $('nextOpen').onclick=()=>{ const i=nextUndecided(cur+1); if(i>=0) goTo(i); else setStatus('Every word in this queue has a decision.'); };
+  $('claimBtn').onclick=toggleClaim; $('exportBtn').onclick=exportJson;
+  $('blocks').addEventListener('click', e=>{ const b=e.target.closest('.blk'); if(b) goTo(parseInt(b.dataset.b,10)*BLOCK); });
+  $('rows').addEventListener('click', e=>{ const r=e.target.closest('tr.row'); if(r) goTo(parseInt(r.dataset.i,10)); });
+  $('nextOpenBlock').onclick=()=>{ for(let b=0;b<NB;b++){ const range=C.slice(b*BLOCK,(b+1)*BLOCK); if(!claims.get(b) && counts(range).pending>0){ goTo(b*BLOCK); return; } } setStatus('No unclaimed block with open words.'); };
+  document.addEventListener('keydown', e=>{
+    if ($('app').hidden) return;
+    if (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||document.querySelector('dialog[open]')) { if(e.key==='Escape') e.target.blur(); return; }
+    if (e.metaKey||e.ctrlKey||e.altKey) return;
+    const map={'1':'approved','2':'rejected','3':'experimental','4':'linguist','5':'source'};
+    if (map[e.key]) { e.preventDefault(); decide(map[e.key]); }
+    else if (e.key==='ArrowLeft') { e.preventDefault(); goTo(cur-1,false); }
+    else if (e.key==='ArrowRight') { e.preventDefault(); goTo(cur+1,false); }
+    else if (e.key==='Enter') { e.preventDefault(); $('nextOpen').click(); }
+    else if (e.key==='Backspace'||e.key==='0') { e.preventDefault(); clearDecision(); }
+    else if (e.key==='n'||e.key==='N') { e.preventDefault(); $('note').focus(); }
+  });
+
+  // ---------- auth ----------
+  $('loginForm').onsubmit = async e => { e.preventDefault(); $('loginErr').textContent='';
+    const {error} = await sb.auth.signInWithPassword({email:$('loginEmail').value.trim(), password:$('loginPassword').value});
+    if (error) $('loginErr').textContent = errMsg(error); };
+  $('forgotBtn').onclick = async () => { const email=$('loginEmail').value.trim(); if(!email){ $('loginErr').textContent='Type your email first.'; return; }
+    const {error} = await sb.auth.resetPasswordForEmail(email, {redirectTo: location.href.split('#')[0]});
+    $('loginErr').textContent = error ? errMsg(error) : 'If that address is invited, a reset link is on its way.'; };
+  $('onboardForm').onsubmit = async e => { e.preventDefault(); $('onboardErr').textContent='';
+    const handle=$('handleInput').value.trim().toLowerCase();
+    if (!/^[a-z0-9][a-z0-9-]{1,39}$/.test(handle)) { $('onboardErr').textContent='Handle: lowercase letters, digits, hyphens, 2–40 characters.'; return; }
+    const pw=$('pwInput').value;
+    if (!$('pwFields').hidden && pw.length<8) { $('onboardErr').textContent='Password needs at least 8 characters.'; return; }
+    if (!$('pwFields').hidden) { const {error} = await sb.auth.updateUser({password:pw}); if (error) { $('onboardErr').textContent=errMsg(error); return; } }
+    const {error} = await sb.from('reviewers').insert({user_id:session.user.id, handle});
+    if (error) { $('onboardErr').textContent = /duplicate|unique/i.test(errMsg(error)) ? 'That handle is taken. Choose another.' : errMsg(error); return; }
+    me={id:session.user.id, handle}; await enterApp(); };
+  $('resetForm').onsubmit = async e => { e.preventDefault(); const {error} = await sb.auth.updateUser({password:$('resetPw').value});
+    if (error) { $('resetErr').textContent=errMsg(error); return; } await afterSignIn(); };
+  $('signOut').onclick = async () => { await sb.auth.signOut(); location.reload(); };
+
+  async function afterSignIn(){
+    const {data, error} = await sb.from('reviewers').select('handle').eq('user_id', session.user.id).maybeSingle();
+    if (error) { show('loginCard'); $('loginErr').textContent=errMsg(error); return; }
+    if (!data) { $('pwFields').hidden = !/^(invite|recovery|magiclink|signup)$/.test(window.__authLinkType); show('onboardCard'); $('handleInput').focus(); return; }
+    me={id:session.user.id, handle:data.handle}; await enterApp();
+  }
+  async function enterApp(){
+    $('reviewerName').textContent=me.handle; $('reviewerChip').hidden=false; $('exportBtn').hidden=false; $('signOut').hidden=false;
+    show('app');
+    try { await loadAll(); } catch(e){ setStatus('Could not load decisions: '+errMsg(e), true); }
+    renderAll(); subscribeLive();
+  }
+
+  // ---------- boot ----------
+  $('queueName').textContent = Q.queue_label || QID;
+  const cfg = window.REVIEW_DESK_CONFIG || {};
+  if (!cfg.supabaseUrl || /YOUR-PROJECT/.test(cfg.supabaseUrl) || !window.supabase) { $('configMissing').hidden=false; show('loginCard'); return; }
+  sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+  let booted=false;
+  sb.auth.onAuthStateChange((event, s) => {
+    session = s;
+    if (event==='PASSWORD_RECOVERY') { show('resetCard'); return; }
+    if (!session) { show('loginCard'); return; }
+    if (!booted) { booted=true; afterSignIn(); }
+  });
+  sb.auth.getSession().then(({data}) => { if (!data.session && !booted) show('loginCard'); });
+})();
+</script>
+</body>
+</html>
