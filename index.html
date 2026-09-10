@@ -144,11 +144,12 @@ dialog p{margin:6px 0;color:var(--muted);font-size:14px}
 dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 @media (prefers-reduced-motion:no-preference){.dbtn,.blk,.btn{transition:background .12s,border-color .12s}}
 /* simple mode: one word, three choices */
-body.simple .wrap{grid-template-columns:1fr;max-width:760px;margin-inline:auto}
-body.simple .rail,body.simple .tbl,body.simple .noterow,body.simple #claimBtn,body.simple details.guide,body.simple #prev,body.simple #next{display:none}
+body.simple .wrap{grid-template-columns:1fr;max-width:980px;margin-inline:auto}
+body.simple .rail,body.simple .noterow,body.simple #claimBtn,body.simple details.guide{display:none}
+body.simple .tbl .hd{font-size:13px}
 body.simple .dbtn{min-height:84px;padding:14px}
 body.simple .dbtn .t{font-size:16px}
-body.simple .word{font-size:52px}
+body.simple .word{font-size:48px}
 .ask{margin-top:12px;font-size:14px;font-weight:500}
 .metaform{margin-top:12px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;align-items:end}
 .metaform label{margin:0 0 4px}
