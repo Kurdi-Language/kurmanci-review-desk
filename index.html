@@ -142,6 +142,21 @@ dialog h2{font:500 20px/1.2 "IBM Plex Serif",Georgia,serif;margin:0 0 6px}
 dialog p{margin:6px 0;color:var(--muted);font-size:14px}
 dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 @media (prefers-reduced-motion:no-preference){.dbtn,.blk,.btn{transition:background .12s,border-color .12s}}
+/* simple mode: one word, three choices */
+body.simple .wrap{grid-template-columns:1fr;max-width:760px;margin-inline:auto}
+body.simple .rail,body.simple .tbl,body.simple .noterow,body.simple #claimBtn,body.simple details.guide,body.simple #prev,body.simple #next{display:none}
+body.simple .decide{grid-template-columns:repeat(3,minmax(0,1fr))}
+body.simple .dbtn[data-s="experimental"],body.simple .dbtn[data-s="source"]{display:none}
+body.simple.more .dbtn[data-s="experimental"],body.simple.more .dbtn[data-s="source"]{display:flex}
+body.simple.more .decide{grid-template-columns:repeat(5,minmax(0,1fr))}
+body.simple .dbtn{min-height:84px;padding:14px}
+body.simple .dbtn .t{font-size:16px}
+body.simple .word{font-size:52px}
+#moreBtn{display:none}
+body.simple #moreBtn{display:inline-block}
+.mywords{font-size:13px;color:var(--muted)}
+.ask{margin-top:12px;font-size:14px;font-weight:500}
+@media (max-width:700px){body.simple .decide,body.simple.more .decide{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -150,6 +165,8 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
   <div class="brand"><h1>Kurmancî Review Desk</h1><span class="letters">ç ê î ş û</span></div>
   <span class="chip"><span class="eyebrow">Queue</span> <b id="queueName">—</b></span>
   <span class="chip" id="reviewerChip" hidden><span class="eyebrow">Reviewer</span> <b id="reviewerName">—</b></span>
+  <span class="chip" id="mineChip" hidden><span class="eyebrow">Your words</span> <b id="mineText">—</b></span>
+  <button class="btn quiet" id="detailsBtn" hidden>Show details</button>
   <button class="btn" id="exportBtn" hidden>Export decisions</button>
   <button class="btn quiet" id="signOut" hidden>Sign out</button>
 </header>
@@ -214,7 +231,7 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
         <button class="dbtn" data-s="approved"><span class="key">1</span><span class="t">Approve</span><span class="s">Valid Kurmancî word, metadata correct</span></button>
         <button class="dbtn" data-s="rejected"><span class="key">2</span><span class="t">Reject</span><span class="s">Keep out of the default pack (reason required)</span></button>
         <button class="dbtn" data-s="experimental"><span class="key">3</span><span class="t">Experimental</span><span class="s">Usable, but not for the default pack</span></button>
-        <button class="dbtn" data-s="linguist"><span class="key">4</span><span class="t">Needs linguist</span><span class="s">Valid but uncertain, or metadata wrong</span></button>
+        <button class="dbtn" data-s="linguist"><span class="key">4</span><span class="t">Not sure</span><span class="s">Maybe valid, but spelling, standard form, or part of speech is uncertain</span></button>
         <button class="dbtn" data-s="source"><span class="key">5</span><span class="t">Needs source</span><span class="s">Provenance or attestation unclear</span></button>
       </div>
       <div class="noterow">
@@ -222,7 +239,9 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
         <button class="btn" id="saveNote">Save note</button>
         <button class="btn quiet" id="clearDecision" title="Remove decision (Backspace)">Clear</button>
       </div>
+      <div class="ask" id="ask" hidden></div>
       <div class="reasons" id="reasons"></div>
+      <button class="btn quiet" id="moreBtn" type="button" style="margin-top:10px">More choices (Experimental, Needs source)</button>
       <div class="status-line" id="statusLine"></div>
       <div class="navrow">
         <button class="btn" id="prev">← Prev</button>
@@ -242,7 +261,7 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
             <dt>Needs linguist</dt><dd>You believe the word may be valid but cannot vouch for the spelling, the standard form, or the part of speech.</dd>
             <dt>Needs source</dt><dd>You cannot tell where this form comes from or whether it is attested outside this source.</dd>
           </dl>
-          <p>Keys: <b>1–5</b> decide, <b>Backspace</b> clear, <b>←/→</b> move, <b>Enter</b> next undecided, <b>N</b> note. Claim an open block so two reviewers do not work the same words.</p>
+          <p>Keys: <b>1–5</b> decide, <b>Backspace</b> clear, <b>←/→</b> move, <b>Enter</b> next undecided, <b>N</b> note. In the simple view the site reserves a range of 50 words for you and moves to the next range when you finish; in the detailed view you claim blocks yourself.</p>
         </div>
       </details>
     </section>
@@ -303,6 +322,23 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
   const claims = new Map();                          // block_no -> row
   let cur = 0;
   try { const s = parseInt(localStorage.getItem('krd.cur.'+QID),10); if(!isNaN(s) && s>=0 && s<N) cur = s; } catch(e){}
+  let simple = true;
+  try { simple = localStorage.getItem('krd.simple') !== 'off'; } catch(e){}
+  let pendingReject = false;
+  function applyMode(){ document.body.classList.toggle('simple', simple); $('detailsBtn').textContent = simple ? 'Show details' : 'Simple view'; try{localStorage.setItem('krd.simple', simple?'on':'off');}catch(e){} }
+  function myBlocks(){ const out=[]; for (const [b,cl] of claims) if (me && cl.handle===me.handle) out.push(b); return out.sort((a,b)=>a-b); }
+  function pendingIn(b){ return counts(C.slice(b*BLOCK,(b+1)*BLOCK)).pending; }
+  async function ensureMyBlock(){
+    // simple mode: work inside blocks claimed by me; claim the next open one when mine are finished
+    for (const b of myBlocks()) if (pendingIn(b)>0) return b;
+    for (let b=0;b<NB;b++){ if (!claims.get(b) && pendingIn(b)>0){ const {error}=await sb.from('block_claims').upsert({queue_id:QID, block_no:b},{onConflict:'queue_id,block_no'}); if(!error){ claims.set(b,{block_no:b,handle:me.handle}); return b; } } }
+    return -1;
+  }
+  function renderMine(){
+    const bs = myBlocks(); if (!bs.length){ $('mineText').textContent='none yet'; return; }
+    const b = bs.find(x=>pendingIn(x)>0); const shown = b==null ? bs[bs.length-1] : b; const range=C.slice(shown*BLOCK,(shown+1)*BLOCK);
+    $('mineText').textContent = `${fmt(range[0].rank)}–${fmt(range[range.length-1].rank)} · ${range.length-pendingIn(shown)} of ${range.length} done`;
+  }
   const decisionOf = c => decisions.get(c.tid) || null;
   function counts(range){ const k={approved:0,rejected:0,experimental:0,linguist:0,source:0,pending:0}; for(const c of range){const d=decisionOf(c); k[d?d.status:'pending']++;} return k; }
   function show(id){ for (const s of ['loginCard','onboardCard','resetCard','app']) $(s).hidden = (s !== id); }
@@ -352,9 +388,17 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
     $('rows').innerHTML = range.map(c=>{const d=decisionOf(c); const i=byTid.get(c.tid);
       return `<tr class="row${i===cur?' cur':''}" data-i="${i}"><td class="num" style="color:var(--muted)">${fmt(c.rank)}</td><td class="w">${esc(c.display)}</td><td>${esc(POS[c.pos]||c.pos)}</td><td class="num">${fmt(c.docs)}</td><td>${d?`<span class="pill p-${STATUS[d.status].cls}">${STATUS[d.status].label}</span>`:'<span class="pill p-pending">—</span>'}</td><td class="by">${d?esc(d.handle):''}</td></tr>`;}).join('');
   }
-  function renderAll(){ renderProgress(); renderBlocks(); renderFocus(); renderTable(); }
-  function goTo(i, scroll){ if(i<0||i>=N) return; const cb=blockOf(i)!==blockOf(cur); cur=i; renderFocus(); if(cb) renderBlocks(); renderTable(); if(scroll!==false) window.scrollTo({top:0,behavior:'smooth'}); }
+  function renderAll(){ renderProgress(); renderBlocks(); renderFocus(); renderTable(); renderMine(); }
+  function goTo(i, scroll){ if(i<0||i>=N) return; pendingReject=false; $('ask').hidden=true; const cb=blockOf(i)!==blockOf(cur); cur=i; renderFocus(); if(cb) renderBlocks(); renderTable(); if(scroll!==false) window.scrollTo({top:0,behavior:'smooth'}); }
   function nextUndecided(from){ for(let i=from;i<N;i++) if(!decisionOf(C[i])) return i; for(let i=0;i<from;i++) if(!decisionOf(C[i])) return i; return -1; }
+  async function nextForMe(from){
+    if (!simple) return nextUndecided(from);
+    const b = await ensureMyBlock(); if (b<0) return -1;
+    const lo=b*BLOCK, hi=Math.min(N,(b+1)*BLOCK);
+    for(let i=Math.max(lo,from);i<hi;i++) if(!decisionOf(C[i])) return i;
+    for(let i=lo;i<hi;i++) if(!decisionOf(C[i])) return i;
+    return -1;
+  }
 
   // ---------- data ----------
   async function loadAll(){
@@ -396,9 +440,10 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
   async function decide(s){
     const c=C[cur]; const prev=decisionOf(c);
     const note = $('note').value.trim() || STATUS[s].defaultNote;
-    if (s==='rejected' && !note){ setStatus('Reject needs a reason. Pick one below or type a note, then press 2 again.', true); renderReasons('rejected'); $('note').focus(); return; }
+    if (s==='rejected' && !note){ pendingReject = true; $('ask').hidden=false; $('ask').textContent='Why reject "'+c.display+'"? Pick one:'; renderReasons('rejected'); document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', b.dataset.s==='rejected')); if(!simple) $('note').focus(); return; }
+    pendingReject = false; $('ask').hidden=true;
     if (prev && prev.handle!==me.handle && !(await confirmOverride(prev))) return;
-    if (await writeDecision(c, s, note)) { decisions.set(c.tid, Object.assign({}, prev||{}, {target_id:c.tid, status:s, note, handle:me.handle, decided_at:new Date().toISOString()})); setStatus(`${STATUS[s].label} · ${c.display}`); const nx=nextUndecided(cur+1); renderAll(); if(nx>=0) goTo(nx,false); }
+    if (await writeDecision(c, s, note)) { decisions.set(c.tid, Object.assign({}, prev||{}, {target_id:c.tid, status:s, note, handle:me.handle, decided_at:new Date().toISOString()})); setStatus(`${STATUS[s].label} · ${c.display}`); renderAll(); const nx=await nextForMe(cur+1); if(nx>=0) goTo(nx,false); else setStatus(simple ? 'All words in your range are done. Press Enter for the next range.' : 'Every word in this queue has a decision.'); }
   }
   async function saveNoteOnly(){
     const c=C[cur]; const d=decisionOf(c); if(!d){ setStatus('Pick a status first; the note is saved with it.', true); return; }
@@ -443,10 +488,14 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 
   // ---------- events ----------
   document.querySelectorAll('.dbtn').forEach(b=>b.addEventListener('click',()=>decide(b.dataset.s)));
-  $('reasons').addEventListener('click', e=>{ const r=e.target.closest('.reason'); if(!r) return; const inp=$('note'); inp.value = inp.value ? inp.value+'; '+r.dataset.r : r.dataset.r; if (decisionOf(C[cur])) saveNoteOnly(); else inp.focus(); });
+  $('reasons').addEventListener('click', e=>{ const r=e.target.closest('.reason'); if(!r) return; const inp=$('note');
+    if (pendingReject) { inp.value = r.dataset.r; decide('rejected'); return; }
+    inp.value = inp.value ? inp.value+'; '+r.dataset.r : r.dataset.r; if (decisionOf(C[cur])) saveNoteOnly(); else inp.focus(); });
+  $('moreBtn').onclick = () => document.body.classList.toggle('more');
+  $('detailsBtn').onclick = () => { simple = !simple; applyMode(); renderAll(); };
   $('saveNote').onclick=saveNoteOnly; $('clearDecision').onclick=clearDecision;
   $('prev').onclick=()=>goTo(cur-1); $('next').onclick=()=>goTo(cur+1);
-  $('nextOpen').onclick=()=>{ const i=nextUndecided(cur+1); if(i>=0) goTo(i); else setStatus('Every word in this queue has a decision.'); };
+  $('nextOpen').onclick=async()=>{ const i=await nextForMe(cur+1); if(i>=0) goTo(i); else setStatus('Every word in this queue has a decision.'); };
   $('claimBtn').onclick=toggleClaim; $('exportBtn').onclick=exportJson;
   $('blocks').addEventListener('click', e=>{ const b=e.target.closest('.blk'); if(b) goTo(parseInt(b.dataset.b,10)*BLOCK); });
   $('rows').addEventListener('click', e=>{ const r=e.target.closest('tr.row'); if(r) goTo(parseInt(r.dataset.i,10)); });
@@ -491,10 +540,11 @@ dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
     me={id:session.user.id, handle:data.handle}; await enterApp();
   }
   async function enterApp(){
-    $('reviewerName').textContent=me.handle; $('reviewerChip').hidden=false; $('exportBtn').hidden=false; $('signOut').hidden=false;
-    show('app');
+    $('reviewerName').textContent=me.handle; $('reviewerChip').hidden=false; $('exportBtn').hidden=false; $('signOut').hidden=false; $('mineChip').hidden=false; $('detailsBtn').hidden=false;
+    applyMode(); show('app');
     try { await loadAll(); } catch(e){ setStatus('Could not load decisions: '+errMsg(e), true); }
     renderAll(); subscribeLive();
+    if (simple) { const i = await nextForMe(cur); if (i>=0) goTo(i,false); }
   }
 
   // ---------- boot ----------
