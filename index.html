@@ -444,7 +444,10 @@ body.simple .word{font-size:48px}
   function errMsg(e){ return (e && (e.message || e.error_description || e.code)) || String(e); }
 
   async function writeDecision(c, status, note, meta){
-    const {error} = await sb.from('decisions').upsert({queue_id:QID, target_id:c.tid, rank:c.rank, display:c.display, status, note, meta: meta||null}, {onConflict:'queue_id,target_id'});
+    const row = {queue_id:QID, target_id:c.tid, rank:c.rank, display:c.display, status, note};
+    if (status==='metadata') row.meta = meta;
+    const {error} = await sb.from('decisions').upsert(row, {onConflict:'queue_id,target_id'});
+    if (error && /'meta' column/.test(error.message||'')) { setStatus('Status 2 needs the database migration supabase/migrations/002-metadata-change.sql to be run once.', true); return false; }
     if (error) { setStatus('Could not save: '+errMsg(error), true); return false; }
     const b = blockOf(byTid.get(c.tid));
     if (!claims.get(b)) await sb.from('block_claims').upsert({queue_id:QID, block_no:b}, {onConflict:'queue_id,block_no'});
