@@ -40,6 +40,7 @@ begin
   return old;
 end $$;
 
-create or replace view public.decisions_export as
+drop view if exists public.decisions_export;
+create view public.decisions_export as
   select queue_id, rank, target_id, display, status, note, meta, handle, decided_at
   from public.decisions order by queue_id, rank;
