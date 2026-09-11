@@ -162,18 +162,65 @@ body.simple .tbl .hd{font-size:13px}
 @media (max-width:700px){.decide{grid-template-columns:repeat(2,minmax(0,1fr))}.metaform{grid-template-columns:1fr}}
 
 .langbtn{font-family:"IBM Plex Mono",monospace;font-size:12px}
+.top .tools{display:contents}
+#menuBtn{display:none}
+
+/* phones: compact header, word and buttons first, panel below */
+@media (max-width:700px){
+  body{padding-inline:12px}
+  .top{position:static;gap:8px;padding-block:10px 8px;margin-inline:-12px;padding-inline:12px}
+  .brand{gap:6px}
+  .brand h1{font-size:16px}
+  .brand .letters{display:none}
+  #mineChip{font-size:12px;padding:3px 8px}
+  #mineChip .eyebrow{display:none}
+  #menuBtn{display:inline-block;padding:4px 9px;font-size:16px}
+  .top .tools{display:none;width:100%;flex-wrap:wrap;gap:8px;padding-top:6px;border-top:1px solid var(--line)}
+  .top.open .tools{display:flex}
+  .wrap{gap:14px;margin-top:12px}
+  .rail{order:2;gap:10px}
+  main{order:1}
+  .focus{display:flex;flex-direction:column;padding:12px 14px 14px;border-radius:10px}
+  .focus .meta{order:1;font-size:12px;gap:8px}
+  .word{order:2;font-size:34px;margin:2px 0 0}
+  .word small{font-size:15px;margin-left:8px}
+  .decide{order:3;margin-top:10px;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .dbtn{min-height:0;padding:8px 8px 8px 14px;gap:1px}
+  .dbtn .s{display:none}
+  .dbtn .t{font-size:13.5px;line-height:1.2}
+  .dbtn .code{font-size:9.5px}
+  .dbtn .key{font-size:10px;line-height:15px}
+  .metaform{order:4;grid-template-columns:1fr}
+  .ask{order:5;margin-top:8px}
+  .reasons{order:6}
+  .status-line{order:7}
+  #undoBtn{order:8}
+  .navrow{order:9;margin-top:10px}
+  .navrow .btn{padding:7px 10px;font-size:13px}
+  .facts{order:10;grid-template-columns:1fr 1fr;gap:6px 12px;margin-top:12px;padding-top:10px}
+  .fact .l{font-size:10.5px}
+  .fact .v{font-size:13.5px}
+  .note-hint{order:11;font-size:12.5px}
+  .noterow{order:12}
+  details.guide{order:13}
+  .tbl{margin-top:12px}
+  td.w{font-size:15px}
+}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand"><h1 data-i18n="title">Nirxandina Peyvên Kurmancî</h1><span class="letters">ç ê î ş û</span></div>
-  <span class="chip"><span class="eyebrow" data-i18n="queue">Lîste</span> <b id="queueName">—</b></span>
-  <span class="chip" id="reviewerChip" hidden><span class="eyebrow" data-i18n="reviewer">Nirxîner</span> <b id="reviewerName">—</b></span>
   <span class="chip" id="mineChip" hidden><span class="eyebrow" data-i18n="mine">Peyvên te</span> <b id="mineText">—</b></span>
-  <button class="btn quiet" id="detailsBtn" hidden></button>
-  <button class="btn" id="exportBtn" hidden data-i18n="export">Biryaran dakêşe</button>
-  <button class="btn quiet" id="signOut" hidden data-i18n="signOut">Derkeve</button>
-  <button class="btn quiet langbtn" id="langBtn" data-i18n="lang">English</button>
+  <button class="btn quiet" id="menuBtn" type="button" aria-label="Menu">☰</button>
+  <div class="tools">
+    <span class="chip" id="queueChip"><span class="eyebrow" data-i18n="queue">Lîste</span> <b id="queueName">—</b></span>
+    <span class="chip" id="reviewerChip" hidden><span class="eyebrow" data-i18n="reviewer">Nirxîner</span> <b id="reviewerName">—</b></span>
+    <button class="btn quiet" id="detailsBtn" hidden></button>
+    <button class="btn" id="exportBtn" hidden data-i18n="export">Biryaran dakêşe</button>
+    <button class="btn quiet" id="signOut" hidden data-i18n="signOut">Derkeve</button>
+    <button class="btn quiet langbtn" id="langBtn" data-i18n="lang">English</button>
+  </div>
 </header>
 
 <div id="configMissing" class="banner" hidden data-i18n="configMissing"></div>
@@ -535,6 +582,7 @@ body.simple .tbl .hd{font-size:13px}
     if (ok) { const i=last.i; last=null; $('undoBtn').hidden=true; goTo(i,false); const d=decisionOf(c); setStatus(t('undone',{word:c.display, state:d?label(d.status):t('undecided').toLowerCase()})); renderAll(); }
   };
   $('detailsBtn').onclick = () => { simple = !simple; applyMode(); renderAll(); };
+  $('menuBtn').onclick = () => document.querySelector('.top').classList.toggle('open');
   $('langBtn').onclick = () => { lang = lang==='ku' ? 'en' : 'ku'; applyLang(); if (!$('app').hidden) renderAll(); };
   $('saveNote').onclick=saveNoteOnly; $('clearDecision').onclick=clearDecision;
   $('prev').onclick=()=>goTo(cur-1); $('next').onclick=()=>goTo(cur+1);
