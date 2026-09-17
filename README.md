@@ -3,7 +3,7 @@
 A small website where invited reviewers sign in and record human decisions on Kurmancî vocabulary candidates. Static site on GitHub Pages, database and login on Supabase. Both are free; no domain, no card.
 
 - Site: `https://kurdi-language.github.io/kurmanci-review-desk/` (after step 3)
-- Candidates: `queue-hunspell-kuwiki-001.js`, generated from the `kurmanci` repo (`scripts/review-desk/build_hunspell_queue.py`)
+- Candidates: `queue-hunspell-kuwiki-002.js` (current batch; `queue-hunspell-kuwiki-001.js` is the completed first batch), generated from the `kurmanci` repo (`scripts/review-desk/build_hunspell_queue.py`)
 - Decisions: stored in Supabase, exported as JSON, merged into `data/review-decisions/…/decisions.jsonl` with `scripts/review-desk/merge_review_desk_export.py`
 
 Nothing in this site makes a linguistic decision. It only records what a signed-in human chose, stamped server-side with their reviewer handle, and keeps every overwrite and delete in a history table.
