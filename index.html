@@ -45,7 +45,8 @@ a{color:var(--accent)}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .btn.quiet{border-color:transparent;background:transparent;color:var(--muted)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-input[type=text],input[type=email],input[type=password]{width:100%;border:1px solid var(--line-strong);border-radius:8px;padding:9px 10px;font:inherit;background:var(--surface);color:var(--ink)}
+/* 16px: below that, mobile Safari zooms the page whenever a field takes focus. */
+input[type=text],input[type=email],input[type=password]{width:100%;border:1px solid var(--line-strong);border-radius:8px;padding:9px 10px;font:inherit;font-size:16px;background:var(--surface);color:var(--ink)}
 label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
 
 .wrap{display:grid;grid-template-columns:280px minmax(0,1fr);gap:20px;margin-top:18px;align-items:start}
@@ -156,7 +157,7 @@ body.simple .tbl .hd{font-size:13px}
 .ask{margin-top:12px;font-size:14px;font-weight:500}
 .metaform{margin-top:12px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;align-items:end}
 .metaform label{margin:0 0 4px}
-.metaform select{width:100%;border:1px solid var(--line-strong);border-radius:8px;padding:9px 10px;font:inherit;background:var(--surface);color:var(--ink)}
+.metaform select{width:100%;border:1px solid var(--line-strong);border-radius:8px;padding:9px 10px;font:inherit;font-size:16px;background:var(--surface);color:var(--ink)}
 .metaform .full{grid-column:1 / -1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .metaform .err{color:var(--bad);font-size:13px}
 @media (max-width:700px){.decide{grid-template-columns:repeat(2,minmax(0,1fr))}.metaform{grid-template-columns:1fr}}
@@ -385,21 +386,37 @@ body.simple .tbl .hd{font-size:13px}
   let pendingReject = false, last = null;
   const decisionOf = c => decisions.get(c.tid) || null;
   function counts(range){ const k={approved:0,metadata:0,rejected:0,experimental:0,linguist:0,source:0,pending:0}; for(const c of range){const d=decisionOf(c); k[d?d.status:'pending']++;} return k; }
+  // On a touch device a field that takes focus by itself opens the keyboard over the screen
+  // and scrolls the page to it; there the reviewer taps the field when they want it.
+  const autoFocus = el => { let fine = true; try { fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches; } catch(e){} if (fine) el.focus(); };
   function show(id){ for (const s of ['loginCard','onboardCard','resetCard','app']) $(s).hidden = (s !== id); }
   function setStatus(msg, warn){ const el=$('statusLine'); el.textContent=msg||''; el.classList.toggle('warn',!!warn); }
   function applyMode(){ document.body.classList.toggle('simple', simple); $('detailsBtn').textContent = simple ? t('showDetails') : t('simpleView'); try{localStorage.setItem('krd.simple', simple?'on':'off');}catch(e){} }
   function myBlocks(){ const out=[]; for (const [b,cl] of claims) if (me && cl.handle===me.handle) out.push(b); return out.sort((a,b)=>a-b); }
   function pendingIn(b){ return counts(C.slice(b*BLOCK,(b+1)*BLOCK)).pending; }
-  async function ensureMyBlock(){
-    for (const b of myBlocks()) if (pendingIn(b)>0) return b;
-    for (let b=0;b<NB;b++){ if (!claims.get(b) && pendingIn(b)>0){ const {error}=await sb.from('block_claims').upsert({queue_id:QID, block_no:b},{onConflict:'queue_id,block_no'}); if(!error){ claims.set(b,{block_no:b,handle:me.handle}); return b; } } }
+  async function claimBlock(b){
+    const {error} = await sb.from('block_claims').upsert({queue_id:QID, block_no:b},{onConflict:'queue_id,block_no'});
+    if (error) return false;
+    claims.set(b,{block_no:b,handle:me.handle}); return true;
+  }
+  // Which block the next word comes from. The block being worked on comes first: a word left
+  // undecided in an earlier block must never pull the reviewer back there while the block in
+  // front of them still has open words. Only when the current block is finished (or is
+  // someone else's) does the search move on, forwards before it wraps round.
+  async function ensureMyBlock(b0){
+    const cl = claims.get(b0);
+    if (pendingIn(b0)>0 && (!cl || (me && cl.handle===me.handle))) { if (!cl) await claimBlock(b0); return b0; }
+    const mine = myBlocks();
+    for (const b of mine.filter(b=>b>b0).concat(mine.filter(b=>b<b0))) if (pendingIn(b)>0) return b;
+    for (let b=0;b<NB;b++) if (!claims.get(b) && pendingIn(b)>0 && await claimBlock(b)) return b;
     return -1;
   }
 
   // ---------- render ----------
   function renderMine(){
     const bs = myBlocks(); if (!bs.length){ $('mineText').textContent=t('mineNone'); return; }
-    const b = bs.find(x=>pendingIn(x)>0); const shown = b==null ? bs[bs.length-1] : b; const range=C.slice(shown*BLOCK,(shown+1)*BLOCK);
+    const b0 = blockOf(cur); const b = bs.find(x=>pendingIn(x)>0);
+    const shown = bs.indexOf(b0)>=0 ? b0 : (b==null ? bs[bs.length-1] : b); const range=C.slice(shown*BLOCK,(shown+1)*BLOCK);
     $('mineText').textContent = t('mineText', {from:fmt(range[0].rank), to:fmt(range[range.length-1].rank), done:range.length-pendingIn(shown), n:range.length});
   }
   function renderProgress(){
@@ -451,7 +468,7 @@ body.simple .tbl .hd{font-size:13px}
   function nextUndecided(from){ for(let i=from;i<N;i++) if(!decisionOf(C[i])) return i; for(let i=0;i<from;i++) if(!decisionOf(C[i])) return i; return -1; }
   async function nextForMe(from){
     if (!simple) return nextUndecided(from);
-    const b = await ensureMyBlock(); if (b<0) return -1;
+    const b = await ensureMyBlock(blockOf(cur)); if (b<0) return -1;
     const lo=b*BLOCK, hi=Math.min(N,(b+1)*BLOCK);
     for(let i=Math.max(lo,from);i<hi;i++) if(!decisionOf(C[i])) return i;
     for(let i=lo;i<hi;i++) if(!decisionOf(C[i])) return i;
@@ -504,13 +521,13 @@ body.simple .tbl .hd{font-size:13px}
     $('metaPos').innerHTML = POS_VALUES.map(v=>`<option value="${v}">${esc(posName(v))} (${v})</option>`).join('');
     $('metaPos').value = (d&&d.meta ? d.meta.part_of_speech : (POS_VALUES.includes(c.pos)?c.pos:'noun'));
     document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', b.dataset.s==='metadata'));
-    $('metaErr').textContent=''; $('metaForm').hidden=false; $('metaDisplay').focus();
+    $('metaErr').textContent=''; $('metaForm').hidden=false; autoFocus($('metaDisplay'));
   }
   async function decide(s, meta){
     const c=C[cur]; const prev=decisionOf(c);
     if (s==='metadata' && !meta) { openMetaForm(); return; }
     const note = $('note').value.trim() || DEFAULT_NOTE[s];
-    if (s==='rejected' && !note){ pendingReject = true; $('ask').hidden=false; $('ask').textContent=t('askWhy',{word:c.display}); renderReasons('rejected'); document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', b.dataset.s==='rejected')); if(!simple) $('note').focus(); return; }
+    if (s==='rejected' && !note){ pendingReject = true; $('ask').hidden=false; $('ask').textContent=t('askWhy',{word:c.display}); renderReasons('rejected'); document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on', b.dataset.s==='rejected')); if(!simple) autoFocus($('note')); return; }
     pendingReject = false; $('ask').hidden=true;
     if (prev && prev.handle!==me.handle && !(await confirmOverride(prev))) return;
     if (await writeDecision(c, s, note, meta)) {
@@ -566,7 +583,7 @@ body.simple .tbl .hd{font-size:13px}
   document.querySelectorAll('.dbtn').forEach(b=>b.addEventListener('click',()=>decide(b.dataset.s)));
   $('reasons').addEventListener('click', e=>{ const r=e.target.closest('.reason'); if(!r) return; const inp=$('note');
     if (pendingReject) { inp.value = r.dataset.r; decide('rejected'); return; }
-    inp.value = inp.value ? inp.value+'; '+r.dataset.r : r.dataset.r; if (decisionOf(C[cur])) saveNoteOnly(); else inp.focus(); });
+    inp.value = inp.value ? inp.value+'; '+r.dataset.r : r.dataset.r; if (decisionOf(C[cur])) saveNoteOnly(); else autoFocus(inp); });
   $('metaForm').onsubmit = e => { e.preventDefault(); const c=C[cur];
     const display=$('metaDisplay').value.trim(); const pos=$('metaPos').value; const normalized=normalizeText(display);
     if (!display) { $('metaErr').textContent=t('metaEmpty'); return; }
@@ -627,7 +644,7 @@ body.simple .tbl .hd{font-size:13px}
   async function afterSignIn(){
     const {data, error} = await sb.from('reviewers').select('handle').eq('user_id', session.user.id).maybeSingle();
     if (error) { show('loginCard'); $('loginErr').textContent=errMsg(error); return; }
-    if (!data) { $('pwFields').hidden = !/^(invite|recovery|magiclink|signup)$/.test(window.__authLinkType); show('onboardCard'); $('handleInput').focus(); return; }
+    if (!data) { $('pwFields').hidden = !/^(invite|recovery|magiclink|signup)$/.test(window.__authLinkType); show('onboardCard'); autoFocus($('handleInput')); return; }
     me={id:session.user.id, handle:data.handle}; await enterApp();
   }
   async function enterApp(){
